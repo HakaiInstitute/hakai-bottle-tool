@@ -69,12 +69,12 @@ def process_sample_data(event_pk,
         df_data, temp_index_list = transform.set_index_from_list(df_data, index_variable_list)
 
         # Remove Drop Metadata related variables
-        df_data, df_drop_meta = transform.remove_variable(df_data, meta_variable_list)
+        #df_data, df_drop_meta = transform.remove_variable(df_data, meta_variable_list)
 
         # Remove empty columns and ignored ones
-        df_data = transform.remove_empty_columns(df_data)
-        df_data, df_ignored = transform.remove_variable(df_data, ignored_variable_list)
-        metadata, meta_ignored = transform.remove_variable(metadata, ignored_variable_list)
+        #df_data = transform.remove_empty_columns(df_data)
+        #df_data, df_ignored = transform.remove_variable(df_data, ignored_variable_list)
+        #metadata, meta_ignored = transform.remove_variable(metadata, ignored_variable_list)
 
         # Do pivot for some variables
         if 'pivot_variable' in endpoint_list:
@@ -91,15 +91,15 @@ def process_sample_data(event_pk,
         # TODO leverage group from NetCDF files by replacing the separator '_'  by '.'
 
         # Merged Back Meta Columns with Data Columns
-        df_out = df_drop_meta.join(df_data, how='outer').drop_duplicates()
+        #df_out = df_drop_meta.join(df_data, how='outer').drop_duplicates()
         # TODO review do we still need that metadata recombination
 
     else:  # No Sample is available for event_pk and endpoint
         print('No data available from: ' + endpoint_list['endpoint'])
-        df_out = None
+        df_data = None
         metadata = None
 
-    return df_out, metadata
+    return df_data, metadata
 
 
 def combine_data_from_hakai_endpoints(event_pk,
@@ -132,7 +132,7 @@ def combine_data_from_hakai_endpoints(event_pk,
 
     # Make all missing value being np.nan and remove all empty columns
     df_joined.replace('', np.nan, inplace=True)
-    df_joined = transform.remove_empty_columns(df_joined)
+    # df_joined = transform.remove_empty_columns(df_joined)
 
     # Remove indexation
     df_joined = df_joined.reset_index()
@@ -152,6 +152,7 @@ def get_matching_ctd_data(df_bottles):
     start_time_range = (df_bottles['collected'].min() - TIME_RANGE).strftime("%Y-%m-%d")
     end_time_range = (df_bottles['collected'].max() + TIME_RANGE).strftime("%Y-%m-%d")
 
+    # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
     filter_url = 'fields=station,ctd_cast_pk,start_dt,bottom_dt,end_dt&station=' + station_name[0] + '&start_dt>' + \
                  start_time_range + '&start_dt<' + end_time_range + '&limit=-1&distinct'
     # TODO handle multiple sites: Not sure if that's necessary
@@ -201,7 +202,9 @@ def get_matching_ctd_data(df_bottles):
 
 
         # TODO add range limit in meters that depth values can be with be matched with.
-        # Could be done after the fact with a flag based on percentage of the depth
+        #  Could be done after the fact with a flag based on percentage of the depth
+        # TODO add another step for if CTD from closest drop in time do not reach the maximum sampled depth. Could look
+        #  at other profiles completed within the time interval
     else:
         # If no CTD data available just give back the bottle data still.
         df_with_matched_ctd = df_bottles
@@ -213,9 +216,6 @@ def create_bottle_netcdf(event_pk, format_dict):
     print('Collect Sample data for event pk: '+str(event_pk))
     df_bottles, metadata = combine_data_from_hakai_endpoints(event_pk,
                                                              format_dict)
-
-    # There's multiple collected time per event_pk loop through each of them
-    uniqueDrops = df_bottles[['event_pk', 'collected']].drop_duplicates()
 
     # Generate a profile_id variable
     # df_bottles = transform.create_id_variable(df_bottles, 'profile_id', format_dict['cdm_variables'])
@@ -236,12 +236,12 @@ def create_bottle_netcdf(event_pk, format_dict):
         df_matched, df_ignored = transform.remove_variable(df_matched, format_dict['ctd_variable_list_to_ignore'])
 
         # Rename variables for ERDDAP time, and depth
-        df_matched = df_matched.rename(columns={'collected': 'time',
-                                                'sample_matching_depth': 'depth'})
+        df_matched['time'] = df_matched['collected']
+        df_matched['depth'] = df_matched['sample_matching_depth']
 
         # Rename some of the variables
         for key in format_dict['rename_variables_dict'].keys():
-            df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
+            df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['W'][key], x))
 
         # Sort columns
         df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
@@ -254,11 +254,12 @@ def create_bottle_netcdf(event_pk, format_dict):
 
         # Create netcdf by converting the pandas DataFrame to an xarray
         ds = erddap_output.convert_bottle_data_to_xarray(df_matched, profile_id+'.nc', metadata_for_xarray,
-                                           format_dict)
+                                                         format_dict)
 
         meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
 
     return
+
 
 # Get the list of event_pk for a specific site
 def get_event_pks_for_a_site(endpoint_list, station_name):
@@ -274,9 +275,10 @@ def get_event_pks_for_a_site(endpoint_list, station_name):
 
     return df_joined
 
-def get_site_netcdf_files(station_name):
+
+def get_site_netcdf_files(station_name, format_dict):
     print('Get Site Specific related Event Pks')
-    list = get_event_pks_for_a_site(endpoint_list, station_name)
+    list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name)
 
     # Loop through each separate event_pk
     for event_pk in list['event_pk'].unique():
