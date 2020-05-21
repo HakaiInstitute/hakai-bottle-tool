@@ -235,6 +235,9 @@ def create_bottle_netcdf(event_pk, format_dict):
         # Remove discard listed CTD variables
         df_matched, df_ignored = transform.remove_variable(df_matched, format_dict['ctd_variable_list_to_ignore'])
 
+        # Convert time data to a datetime object
+        df_matched, converted_columns = transform.convert_columns_to_datetime(df_matched, format_dict['time_variable_list'])
+
         # Rename variables for ERDDAP time, and depth
         df_matched['time'] = df_matched['collected']
         df_matched['depth'] = df_matched['sample_matching_depth']
