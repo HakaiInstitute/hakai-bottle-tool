@@ -1,7 +1,7 @@
 import re
 import numpy as np
 import pandas as pd
-from hakai_api import Client
+import xarray as xr
 
 from create_bottle_file import transform
 
@@ -10,19 +10,25 @@ def convert_bottle_data_to_xarray(df,
                                   netcdf_file_name,
                                   metadata_for_xarray,
                                   format_dict):
+
+    # Work on a copy of the initial dataframe
+    df_formated = df
+
     # Standardize the data types
     # Text data to Strings
-    df = transform.standardize_object_type(df, format_dict['string_columns_regexp'], '|S', np.nan, '')
+    df_formated = transform.standardize_object_type(df_formated, format_dict['string_columns_regexp'], '|S', np.nan, '')
 
-    # Date time objects to datetime64s UTC
-    df, converted_time_variables = transform.convert_columns_to_datetime(df, format_dict['time_variable_list'])
+    # DatetimeTZ objects to datetime64s UTC with no time zone. Xarray can't handle them.
+    datetimetz_variable_list = df.select_dtypes(['datetimetz']).columns
+    for time_variable in datetimetz_variable_list:
+        df_formated[time_variable] = pd.to_datetime(df_formated[time_variable], utc=True).dt.tz_localize(None)
 
     print('Convert DataFrame to Xarray')
     # Convert to a xarray
-    ds = df.to_xarray()
+    ds = df_formated.to_xarray()
 
-    # Add metadata and documentation to xarray data from the database metadata
-    ds = add_metadata_to_xarray(ds, metadata_for_xarray, converted_time_variables)
+    # Add Metadata to xarray
+    ds = add_metadata_to_xarray(ds, metadata_for_xarray, df)
 
     #TODO add documentation to data. Specify all the variable attributes.
 
@@ -32,16 +38,28 @@ def convert_bottle_data_to_xarray(df,
     return ds
 
 
-def add_metadata_to_xarray(ds, metadata, time_variable_list):
+def add_metadata_to_xarray(ds, metadata, df):
     # Give standard attributes to time variables
-    for time_variable in time_variable_list:
+
+    # Datetime variables
+    for time_variable in df.select_dtypes('datetime').columns:
+        if time_variable in ds:
+            ds[time_variable].encoding['units'] = 'seconds since 1970-01-01T00:00:00'
+
+    # Datetimetz variables
+    for time_variable in df.select_dtypes('datetimetz').columns:
         if time_variable in ds:
             ds[time_variable].encoding['units'] = 'seconds since 1970-01-01T00:00:00Z'
             ds[time_variable].attrs['timezone'] = 'UTC'
 
+    # timedelta variables
+    for time_variable in df.select_dtypes('timedelta').columns:
+        if time_variable in ds:
+            ds[time_variable].encoding['units'] = 'seconds'
+
     # Loop through all the metadata variable listed and find any matching ones in the xarray
     for keys in metadata.columns:
-        searchKey = keys.replace('*', '.*?')+'($|_min|_max)'  # Consider values and min/max columns have the metadata
+        searchKey = keys.replace('*', '.*?')+'($|_min|_max|_range)'  # Consider values and min/max columns have the metadata
         regexp = re.compile(searchKey)
         matching_variables = list(filter(regexp.search, ds.keys()))
 
