@@ -241,7 +241,7 @@ def create_bottle_netcdf(event_pk, format_dict):
 
         # Rename some of the variables
         for key in format_dict['rename_variables_dict'].keys():
-            df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['W'][key], x))
+            df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
 
         # Sort columns
         df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
