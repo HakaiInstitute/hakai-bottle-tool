@@ -223,7 +223,7 @@ def convert_columns_to_datetime(df, regexp_string):
 
     for item in columns_to_convert:
         if item in df.columns:
-            if df[item].dtype==object:
+            if df[item].dtype == object:
                 df[item] = pd.to_datetime(df[item])
     return df, columns_to_convert
 
