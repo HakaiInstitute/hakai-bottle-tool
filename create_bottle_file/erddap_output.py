@@ -1,6 +1,7 @@
 import re
 import numpy as np
 import pandas as pd
+import xarray as xr
 
 from create_bottle_file import transform
 
@@ -110,3 +111,26 @@ def compile_netcdf_variable_and_attributes(xarray, variable_log_file_path):
     df_merged_meta.to_csv(variable_log_file_path)
 
     return df_merged_meta
+
+def create_combined_variable_empty_netcdf(file_list):
+    initialize = True
+    for file in file_list:
+        # Read the netcdf file with xarray
+        if initialize:
+            # Read initial file
+            ds = xr.open_dataset(file)
+            # Crop to keep just the first line
+            depth_mask = ds.depth == ds.depth[0]
+            ds_meta = ds.where(depth_mask, drop=True)
+
+            # Unflag initialize step
+            initialize = False
+        else:
+            ds = xr.open_dataset(file)
+            ds_meta_temp = ds_meta.merge(ds, compat='override')
+
+            # Just keep the first depth, we assume it's a 1d dataset
+            depth_mask = ds_meta_temp.depth == ds_meta_temp.depth[0]
+            ds_meta = ds_meta_temp.where(depth_mask, drop=True)
+
+    ds_meta.to_netcdf('METADATA_NETCDF_FOR_DATASETS.nc')
