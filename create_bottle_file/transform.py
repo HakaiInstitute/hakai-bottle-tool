@@ -231,13 +231,15 @@ def create_aggregated_meta_variables(df):
     # df['organization'] = df.filter(like='organization').replace(np.nan, '').aggregate(['unique'], axis=1)
     # df['survey'] = df.filter(like='survey').replace(np.nan, '').aggregate(['unique'], axis=1)
 
-    df['latitude'] = df.filter(regex='lat$').aggregate(['median'], axis=1)
-    df['longitude'] = df.filter(regex='long$').aggregate(['median'], axis=1)
-    df['gather_lat'] = df.filter(regex='gather_lat$').aggregate(['median'], axis=1)
-    df['gather_long'] = df.filter(regex='gather_long$').aggregate(['median'], axis=1)
+    # Split lat and gather lat
+    df_lat, df_gather_lat = remove_variable(df.filter(regex='lat$').select_dtypes('number'), ['gather'])
+    df_long, df_gather_long = remove_variable(df.filter(regex='long$').select_dtypes('number'), ['gather'])
+    df['latitude'] = df_lat.aggregate(['median'], axis=1)
+    df['longitude'] = df_long.aggregate(['median'], axis=1)
+    df['gather_lat'] = df_gather_lat.aggregate(['median'], axis=1)
+    df['gather_long'] = df_gather_long.aggregate(['median'], axis=1)
 
-    df['pressure_transducer_depth'] = df.filter(regex='pressure_transducer_depth$').aggregate(['median'], axis=1)
-    # TODO should we remove the extra variables once combined
+    df['pressure_transducer_depth'] = df.filter(regex='pressure_transducer_depth$').select_dtypes('number').aggregate(['median'], axis=1)
 
     # Remove columns that have been aggregated we assume that all have the same values
     df = df[df.columns.drop(list(df.filter(
