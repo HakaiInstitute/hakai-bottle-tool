@@ -35,8 +35,12 @@ def reduce_to_index(df):
 
 
 def remove_variable(df, var_list_to_remove):
-    df_without_variables = df.drop(var_list_to_remove, axis=1, errors='ignore')
-    df_removed_variables = df.filter(items=var_list_to_remove)
+    # Use regexp for more flexibility
+    regexp_look = '|'.join(var_list_to_remove)
+    columns_to_remove = df.filter(regex=regexp_look).columns
+
+    df_without_variables = df.drop(columns_to_remove, axis=1, errors='ignore')
+    df_removed_variables = df.filter(items=columns_to_remove)
     return df_without_variables, df_removed_variables
 
 
