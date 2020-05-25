@@ -12,15 +12,14 @@ def convert_bottle_data_to_xarray(df,
                                   format_dict):
 
     # Work on a copy of the initial dataframe
-    df_formated = df
+    df_formated = df.copy()
 
     # Standardize the data types
     # Text data to Strings
     df_formated = transform.standardize_object_type(df_formated, format_dict['string_columns_regexp'], '|S', np.nan, '')
 
-    # DatetimeTZ objects to datetime64s UTC with no time zone. Xarray can't handle them.
-    datetimetz_variable_list = df.select_dtypes(['datetimetz']).columns
-    for time_variable in datetimetz_variable_list:
+    # Convert DatetimeTZ objects to datetime64s UTC with no time zone. Xarray can't handle them.
+    for time_variable in df_formated.select_dtypes(['datetimetz']).columns:
         df_formated[time_variable] = pd.to_datetime(df_formated[time_variable], utc=True).dt.tz_localize(None)
 
     print('Convert DataFrame to Xarray')
