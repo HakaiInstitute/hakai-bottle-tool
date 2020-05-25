@@ -65,6 +65,9 @@ def process_sample_data(event_pk,
         # Convert time data to a datetime object
         df_data, converted_columns = transform.convert_columns_to_datetime(df_raw, time_variable_list)
 
+        # Make sure that dtype object columns have fillna values ''
+        df_data[df_data.select_dtypes('object').columns] = df_data[df_data.select_dtypes('object').columns].fillna('')
+
         # Index data
         df_data, temp_index_list = transform.set_index_from_list(df_data, index_variable_list)
 
@@ -123,6 +126,8 @@ def combine_data_from_hakai_endpoints(event_pk,
                 # new_index = index_variable_list + meta_variable_list
                 df_joined = df_joined.merge(df_temp, left_index=True, right_index=True, how='outer')
                 metadata_joined = metadata_joined.merge(metadata, left_index=True, right_index=True, how='outer')
+                # TODO some collection time aren't always the exact number we could use pd.merge_asof and a time
+                # tolerance to do that match
 
     # Add aggregated meta variables
     df_joined = transform.create_aggregated_meta_variables(df_joined)
@@ -225,6 +230,12 @@ def create_bottle_netcdf(event_pk, format_dict):
                                       '_' + df_bottles['collected'].dt.strftime('%Y%m%d_%H%M%S%Z') + \
                                       '_EventPk' + df_bottles['event_pk'].apply(str)
 
+    # Drop empty columns from bottle data
+    df_bottles = df_bottles.dropna(axis=1, how='all')
+
+    # Discard the ignored variables
+    df_bottles, df_bottle_ignored = transform.remove_variable(df_bottles, format_dict['ignored_variable_list'])
+
     # Loop through the different collected time
     for profile_id in df_bottles['bottle_profile_id'].unique():
         df_bottle_temp = df_bottles[df_bottles['bottle_profile_id'] == profile_id]
@@ -285,5 +296,5 @@ def get_site_netcdf_files(station_name, format_dict):
 
     # Loop through each separate event_pk
     for event_pk in list['event_pk'].unique():
-        create_bottle_netcdf(event_pk)
+        create_bottle_netcdf(event_pk, format_dict)
 
