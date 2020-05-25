@@ -63,7 +63,7 @@ def sort_column_order(df, column_to_order):
 
 
 def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot=''):
-    if df.index.duplicated().any():
+    if df.index.duplicated().any() or any(variable_to_pivot):
         if variable_to_pivot in df.columns:  # Group data by pivot
             # Get pivoted data frames with the different aggregations
             df_min = pd.pivot_table(df, index=index_variable_list, columns=variable_to_pivot, aggfunc='min')
@@ -71,8 +71,8 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
             df_count = pd.pivot_table(df, index=index_variable_list, columns=variable_to_pivot, aggfunc='count')
 
             # Combine strings
-            df_str = pd.pivot_table(df, index=index_variable_list, columns=variable_to_pivot,
-                                    aggfunc=lambda x: ', '.join(np.unique(x)))
+            df_str = pd.pivot_table(df.dropna(how='all', axis=1).fillna(''), index=index_variable_list,
+                                    columns=variable_to_pivot, aggfunc=lambda x: ', '.join(np.unique(x)))
 
             # Get average value (only numbers will be kept)
             df_mean = pd.pivot_table(df, index=index_variable_list, columns=variable_to_pivot, aggfunc='mean')
@@ -90,44 +90,60 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
             # Get Mean values, for some reasons datetime variables aren't calculated in mean
             df_mean = df.groupby(by=index_variable_list).mean()
 
+        # Start combining aggregated data
+        # Strings and values will be replaced by list and average values respectively, datetime will use min values
+        df_out = df_min.copy()
+        df_out[df_str.columns] = df_str
+        df_out[df_mean.columns] = df_mean
+
+        # Merge List Column Names into one layer
+        if type(df_out.columns[0]) is tuple:
+            df_out.columns = [f'{j}_{i}' for i, j in df_out.columns]
+
+        # Get Statistics from replicate samples
         # Get time variables since aggregation can't use them
-        time_variables = set(df_min.dropna(axis='columns').columns.tolist()) - set(df_str.columns.tolist()) - set(
-            df_mean.columns.tolist())
+        time_variables = df_min.dropna(how='all', axis=1).select_dtypes(['datetime', 'datetimetz']).columns
 
         # Get range difference between min and max values for numbers only
         df_range_val = df_max[df_mean.columns]-df_min[df_mean.columns]
         df_range_time = df_max[time_variables] - df_min[time_variables]
+        df_range_val[df_range_val == 0] = np.nan
 
-        # Flag range data that has no duplicate
-        df_range_val[df_count[df_range_val.columns] <= 1] = np.nan
-        df_range_time[df_count[time_variables] <= 1] = pd.NaT
+        # Assume that if the difference is 0 than it's not worth keeping
+        df_range_val[df_range_val == 0] = np.nan
+        df_range_time[df_range_time == dt.timedelta(0)] = pd.NaT
 
-        # define Range and replicates columns
-        df_range = df_range_val.join(df_range_time)
-        df_replicates = df_count[df_range.columns]
+        # Drop empty columns
+        df_range_val = df_range_val.dropna(axis=1, how='all')
+        df_range_time = df_range_time.dropna(axis=1, how='all')
 
-        # Merge column names
-        df_range.columns = [f'{j}_{i}' for i, j in df_range.columns]
-        df_replicates.columns = [f'{j}_{i}' for i, j in df_replicates.columns]
+        if any(df_range_val) or any(df_range_time):
+            # Flag range data that has no duplicate
+            df_range_val[df_count[df_range_val.columns] <= 1] = np.nan
+            df_range_time[df_count[time_variables] <= 1] = pd.NaT
 
-        # Add suffix to columns
-        df_range = df_range.add_suffix('_range')
-        df_replicates = df_replicates.add_suffix('_nReplicates')
+            # define Range and replicates columns
+            df_range = df_range_val.join(df_range_time)
+            df_replicates = df_count[df_range.columns]
 
-        # Merge Stats and sort them
-        df_stats = df_range.join(df_replicates, how='outer')
-        df_stats = df_stats[sorted(df_stats.columns, reverse=True)]
+            # TODO remove values which are exactely the same, not sure if we should do that.
 
-        # Start combining aggregated data
-        df_out = df_min
-        df_out[df_str.columns] = df_str
-        df_out[df_mean.columns] = df_mean
+            # Merge column names
+            if type(df_range.columns[0]) is tuple:
+                df_range.columns = [f'{j}_{i}' for i, j in df_range.columns]
+            if type(df_replicates.columns[0]) is tuple:
+                df_replicates.columns = [f'{j}_{i}' for i, j in df_replicates.columns]
 
-        # Merge Column Names into one layer
-        df_out.columns = [f'{j}_{i}' for i, j in df_out.columns]
+            # Add suffix to stats columns
+            df_range = df_range.add_suffix('_range')
+            df_replicates = df_replicates.add_suffix('_nReplicates')
 
-        # Add Stats columns
-        df_out = df_out.join(df_stats, how='outer')
+            # Merge Stats and sort them
+            df_stats = df_range.join(df_replicates, how='outer')
+            df_stats = df_stats[sorted(df_stats.columns, reverse=True)]
+
+            # Add Stats columns
+            df_out = df_out.join(df_stats, how='outer')
 
     else:
         # No duplicated values exist just move on
