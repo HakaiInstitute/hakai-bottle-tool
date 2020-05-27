@@ -94,8 +94,10 @@ def process_sample_data(event_pk,
 
     # If there's no output from API, just past back None values otherwise apply transformations
     if not df_raw.empty:
-        # Convert time data to a datetime object
-        df_data, converted_columns = transform.convert_columns_to_datetime(df_raw, time_variable_list)
+        # # Convert time data to a datetime object
+        # df_data, converted_columns = transform.convert_columns_to_datetime(df_raw, time_variable_list)
+
+        df_data = df_raw.copy()
 
         # Make sure that dtype object columns have fillna values ''
         df_data[df_data.select_dtypes('object').columns] = df_data[df_data.select_dtypes('object').columns].fillna('')
