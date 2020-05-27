@@ -1,4 +1,6 @@
 from create_bottle_file import hakai
+from create_bottle_file import erddap_output
+import glob
 
 
 # List all information needed for reference and creating standard bottle files
@@ -41,13 +43,16 @@ def get_hakai_bottle_processing_list(process_list={}):
                                                    'min_depth_before_cast', 'min_pressure_after_cast',
                                                    'min_depth_after_cast', 'estimated_air_pressure',
                                                    'estimated_depth_shift', 'original_start_dt', 'original_bottom_dt',
-                                                   'original_start_depth', 'original_bottom_depth', 'direction_flag',
-                                                   'descent_rate', 'spec_cond', 'spec_cond_flag', 'oxygen_voltage',
+                                                   'original_start_depth', 'original_bottom_depth', 'spec_cond',
+                                                   'spec_cond_flag', 'oxygen_voltage',
                                                    'oxygen_voltage_flag', 'cast_number']
     # add CTD_ to ctd variables
     process_list['ctd_variable_list_to_ignore'] = ['CTD_' + x for x in process_list['ctd_variable_list_to_ignore']]
 
-    # regex keys used to identify the time variables each item is then separated by | in the regex query
+    process_list['ignored_variable_list'] = ['action$', 'rn$', 'sampling_bout$']
+
+    # regex keys used to identify the time variables each item is then separated by | in the regex query that data gets
+    # converted to datetime objects
     process_list['time_variable_list'] = ['date', 'collected', 'preserved', 'analyzed', '_dt', 'time']
 
     # regex keys used to identify text columns from the different data sets
@@ -57,7 +62,7 @@ def get_hakai_bottle_processing_list(process_list={}):
                                              'project_specific_id', 'station', 'device_model']
 
     # List of Expressions to rename from the different variable names
-    process_list['rename_variables_dict'] = {'poms.True': 'poms.Acidified', 'poms.False': 'poms.nonAcidified'}
+    process_list['rename_variables_dict'] = {'poms_True': 'poms_Acidified', 'poms_False': 'poms_nonAcidified'}
 
     # Variable order at the end
     process_list['variables_final_order'] = ['bottle_profile_id', 'organization', 'work_area', 'site_id', 'latitude',
