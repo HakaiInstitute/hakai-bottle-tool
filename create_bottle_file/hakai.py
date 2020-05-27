@@ -11,8 +11,8 @@ from create_bottle_file import erddap_output
 
 
 def get_hakai_data(endpoint_url, filter_url):
-    # Get Hakai Data
-    # Get Data from Hakai API
+    # Get Hakai Datameta.loc[:, meta.loc['udt_name', :].isin(['date', 'timestamp'])].columns.tolist()
+    # Get Data from Hakai APIregexp_string
     client = Client()  # Follow stdout prompts to get an API token
 
     # Make a data request for sampling stations
@@ -194,7 +194,7 @@ def get_matching_ctd_data(df_bottles):
     # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
     filter_url = 'fields=station,ctd_cast_pk,start_dt,bottom_dt,end_dt&station=' + station_name[0] + '&start_dt>' + \
                  start_time_range + '&start_dt<' + end_time_range + '&limit=-1&distinct'
-    # TODO handle multiple sites: Not sure if that's necessary
+    # TODO handle multiple sites: Not sure if that's necessary','.join(map(str,selected_cast_pks))
 
     endpoint_url = 'ctd/views/file/cast/data'
 
