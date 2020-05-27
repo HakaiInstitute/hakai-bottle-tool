@@ -217,7 +217,7 @@ def get_matching_ctd_data(df_bottles):
         selected_cast_pks = df_bottles['ctd_cast_pk'].unique()
 
         # Get the corresponding data from the API (ignore CTD with depth flagged: Seabird Flag is -9.99E-29)
-        filter_url = 'ctd_cast_pk=' + str(selected_cast_pks[0]) + '&direction_flag=d&depth!=-9.99E-29&limit=-1'
+        filter_url = 'ctd_cast_pk={' + ','.join(map(str,selected_cast_pks)) + '}&direction_flag=d&depth!=-9.99E-29&limit=-1'
         df_ctd_profile, url, ctd_metadata = get_hakai_data(endpoint_url, filter_url)
         # FIXME Make the download compatible with multiple cast pks
 
