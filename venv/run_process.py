@@ -80,6 +80,18 @@ event_pk = 3983709
 event_pk = 516386
 event_pk = 504
 event_pk = 466112
-# event_pk = 3098
-hakai.create_bottle_netcdf(event_pk, get_hakai_bottle_processing_list())
-# get_site_netcdf_files(site_name)
+event_pk = 3098
+event_pk = 504
+event_pk = 30471
+event_pk = 65094
+event_pk = 185115
+event_pk = 296416
+event_pk= 348755
+event_pk = 343710
+event_pk = 68551
+
+# hakai.create_bottle_netcdf(event_pk, get_hakai_bottle_processing_list())
+hakai.get_site_netcdf_files(site_name, get_hakai_bottle_processing_list())
+# local_file_list = glob.glob('*.nc')
+# variable_order = hakai.get_hakai_variable_order(get_hakai_bottle_processing_list())
+# erddap_output.create_combined_variable_empty_netcdf(local_file_list, variable_order)
