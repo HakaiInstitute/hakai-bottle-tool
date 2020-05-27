@@ -25,6 +25,38 @@ def get_hakai_data(endpoint_url, filter_url):
     response = client.get(url_meta)
     meta = pd.DataFrame(response.json())
 
+    # Remove extra columns in metadata if they have been filtered in the query
+    meta = meta[df.columns]
+
+    if any(df):
+        # Standardize output based on database
+        dt_variables = meta.loc[:, meta.loc['udt_name', :].isin(['date', 'timestamp', 'timestamptz'])].columns.tolist()
+        if any(dt_variables):
+            for item in dt_variables:
+                df[item] = pd.to_datetime(df[item])
+
+        # Integer
+        int_variables = meta.loc[:, meta.loc['udt_name', :].isin(['int4', 'int8', 'int16'])].columns.tolist()
+        if any(int_variables):
+            df[int_variables].astype('int')
+
+        # Float
+        float_variables = meta.loc[:, meta.loc['udt_name', :].isin(['float4', 'float8', 'float16',
+                                                                    'float32', 'numeric'])].columns.tolist()
+        if any(float_variables):
+            df[float_variables].astype('float')
+
+        # Bool
+        bool_variables = meta.loc[:, meta.loc['udt_name', :].isin(['bool'])].columns.tolist()
+        if any(bool_variables):
+            df[bool_variables].astype('bool')
+
+        # Text Data
+       # text_variables = meta.loc[:, meta.loc['udt_name', :].isin(['text', 'bpchar',
+       #                                                            'no2_no3_units_type', 'sample_status',
+       #                                                            'quality_level_type','varchar','processing_stage'])].columns.tolist()
+       # df = transform.standardize_object_type(df.fillna(value=''), text_variables, '|S', '', '')
+
     return df, url, meta
 
 
