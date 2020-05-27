@@ -328,3 +328,17 @@ def get_site_netcdf_files(station_name, format_dict):
     for event_pk in list['event_pk'].unique():
         create_bottle_netcdf(event_pk, format_dict)
 
+
+def get_hakai_variable_order(format_dict):
+    print('Retrieve Hakai''s variable order')
+    variables_order = []
+    for ii in format_dict['endpoint_list']:
+        sample_type_name = get_prefix_name_from_hakai_endpoint_url(format_dict['endpoint_list'][ii]['endpoint'])
+        df, url, meta = get_hakai_data(format_dict['endpoint_list'][ii]['endpoint'], 'limit=1')
+        variables_order.extend(sample_type_name + '_([a-zA-Z0-9_]*_){0,1}' + df.columns)
+
+    return variables_order
+
+
+
+
