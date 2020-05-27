@@ -75,7 +75,7 @@ def generate_depth_matching_variable(df, index_variable_list):
 
 
 def get_prefix_name_from_hakai_endpoint_url(url):
-    out = re.search(r'[a-zA-Z]+\Z', url)
+    out = re.search(r'[a-zA-Z0-9]+\Z', url)
     return out[0]
 
 
