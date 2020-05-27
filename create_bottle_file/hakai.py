@@ -204,7 +204,7 @@ def get_matching_ctd_data(df_bottles):
     # If any profile is available merge it to the bottle data
     if len(df_ctd_site_specific_drops) > 0:
         # Extract matching time from CTD data
-        df_ctd_site_specific_drops['matching_time'] = pd.to_datetime(df_ctd_site_specific_drops['start_dt'])
+        df_ctd_site_specific_drops['matching_time'] = df_ctd_site_specific_drops['start_dt']
 
         # Sort profiles in time
         df_ctd_site_specific_drops = df_ctd_site_specific_drops.sort_values(['matching_time'])
