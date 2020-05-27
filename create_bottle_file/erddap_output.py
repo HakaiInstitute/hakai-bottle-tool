@@ -112,9 +112,13 @@ def compile_netcdf_variable_and_attributes(xarray, variable_log_file_path):
 
     return df_merged_meta
 
-def create_combined_variable_empty_netcdf(file_list):
+
+def create_combined_variable_empty_netcdf(file_list, variable_order):
+    print('Combine NetCDF File to Full Variable List')
     initialize = True
+
     for file in file_list:
+        print(file)
         # Read the netcdf file with xarray
         if initialize:
             # Read initial file
@@ -133,4 +137,37 @@ def create_combined_variable_empty_netcdf(file_list):
             depth_mask = ds_meta_temp.depth == ds_meta_temp.depth[0]
             ds_meta = ds_meta_temp.where(depth_mask, drop=True)
 
-    ds_meta.to_netcdf('METADATA_NETCDF_FOR_DATASETS.nc')
+    # Force all datetime encodings to be seconds since 1970,1,1
+    for var in ds_meta:
+        if ds_meta[var].dtype == 'datetime64[ns]':
+            if 'timezone' in ds_meta[var].attrs and ds_meta[var].attrs['timezone'] == 'UTC':
+                ds_meta[var].encoding['units'] = 'seconds since 1970-01-01T00:00:00Z'
+            else:
+                ds_meta[var].encoding['units'] = 'seconds since 1970-01-01T00:00:00'
+        elif ds_meta[var].dtype == 'timedelta64[ns]':
+            ds_meta[var].encoding['units'] = 'seconds'
+
+    # Sort dataset based on variable input
+    ordered_variables = []
+    for var in variable_order:
+        #var = re.sub('\.', '_([a-zA-Z0-9_]*_){0,1}', var)
+        r = re.compile(var)
+        for item in list(filter(r.match, list(ds_meta.variables))):
+            if item not in ordered_variables:
+                ordered_variables.append(item)
+
+    # Add CTD
+    r = re.compile('CTD_.*')
+    ordered_variables.extend(list(filter(r.match, list(ds_meta.variables))))
+
+    # Items not listed should be at the beginning
+    variables_with_unknown_order = []
+    for var in ds_meta.variables:
+        if var not in ordered_variables:
+            variables_with_unknown_order.append(var)
+
+    # Reorder dataset
+    final_order = variables_with_unknown_order + ordered_variables
+    ds_meta_out = ds_meta[final_order]
+
+    ds_meta_out.to_netcdf('METADATA_NETCDF_FOR_DATASETS.nc')
