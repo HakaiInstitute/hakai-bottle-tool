@@ -293,11 +293,17 @@ def create_bottle_netcdf(event_pk, format_dict):
     # Add Index for output dimensions
     df_matched = df_matched.set_index(['depth'])
 
+    # Remove empty columns
+    df_matched = df_matched.dropna(how='all', axis=1)
+
     # Merge metadata from bottles and CTD to fill up the netcdf attributes
     metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
 
+    #Define the netcdf file name to be created
+    netcdf_file_name_out = df_bottles['bottle_profile_id'][0]+'.nc'
+
     # Create netcdf by converting the pandas DataFrame to an xarray
-    ds = erddap_output.convert_bottle_data_to_xarray(df_matched, df_bottles['bottle_profile_id'][0],
+    ds = erddap_output.convert_bottle_data_to_xarray(df_matched, netcdf_file_name_out,
                                                      metadata_for_xarray, format_dict)
 
     meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
