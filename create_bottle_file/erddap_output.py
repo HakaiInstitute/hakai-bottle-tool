@@ -132,7 +132,10 @@ def create_combined_variable_empty_netcdf(file_list, variable_order):
             initialize = False
         else:
             ds = xr.open_dataset(file)
-            ds_meta_temp = ds_meta.merge(ds, compat='override')
+            ds_mask = ds.depth == -1
+            ds_mask[0] = True
+            ds = ds.where(ds_mask, drop=True)
+            ds_meta_temp = ds_meta.merge(ds, compat='identical')
 
             # Just keep the first depth, we assume it's a 1d dataset
             depth_mask = ds_meta_temp.depth == ds_meta_temp.depth[0]
