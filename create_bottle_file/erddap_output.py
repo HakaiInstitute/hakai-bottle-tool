@@ -11,7 +11,7 @@ def convert_bottle_data_to_xarray(df,
                                   metadata_for_xarray,
                                   format_dict):
 
-    # Work on a copy of the initial dataframe
+    # Work on a copy of the initial data frame
     df_formatted = df.copy()
 
     # Standardize the data types
@@ -29,8 +29,6 @@ def convert_bottle_data_to_xarray(df,
 
     # Add Metadata to xarray
     ds = add_metadata_to_xarray(ds, metadata_for_xarray, df)
-
-    #TODO add documentation to data. Specify all the variable attributes.
 
     # Save xarray to netcdf
     print('Save to '+netcdf_file_name)
@@ -128,7 +126,7 @@ def create_combined_variable_empty_netcdf(file_list, variable_order):
             depth_mask = ds.depth == ds.depth[0]
             ds_meta = ds.where(depth_mask, drop=True)
 
-            # Unflag initialize step
+            # Remove flag for initialize step
             initialize = False
         else:
             ds = xr.open_dataset(file)
@@ -151,7 +149,7 @@ def create_combined_variable_empty_netcdf(file_list, variable_order):
         elif ds_meta[var].dtype == 'timedelta64[ns]':
             ds_meta[var].encoding['units'] = 'seconds'
 
-    # Sort dataset based on variable input
+    # Sort data set based on variable input
     ordered_variables = []
     for var in variable_order:
         #var = re.sub('\.', '_([a-zA-Z0-9_]*_){0,1}', var)
