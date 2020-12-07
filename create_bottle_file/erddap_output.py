@@ -168,8 +168,20 @@ def create_combined_variable_empty_netcdf(file_list, variable_order):
         if var not in ordered_variables:
             variables_with_unknown_order.append(var)
 
-    # Reorder dataset
+    # Reorder data set
     final_order = variables_with_unknown_order + ordered_variables
     ds_meta_out = ds_meta[final_order]
 
     ds_meta_out.to_netcdf('METADATA_NETCDF_FOR_DATASETS.nc')
+
+
+def compare_netcdf(fileList, reference_file):
+    # TODO Not done yet
+    print('Compare NetCDF files')
+    ds_ref = xr.open_dataset(reference_file)
+
+    for file in fileList:
+        ds = xr.open_dataset(file)
+
+
+
