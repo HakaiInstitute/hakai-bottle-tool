@@ -228,7 +228,7 @@ def get_matching_ctd_data(df_bottles):
 
 
 def create_bottle_netcdf(event_pk, format_dict):
-    print('Collect Sample data for event pk: ' + str(event_pk))
+    print('Collect Sample data for event pk: [' + str(event_pk)+']')
     df_bottles, metadata = combine_data_from_hakai_endpoints(event_pk,
                                                              format_dict)
 
@@ -244,45 +244,49 @@ def create_bottle_netcdf(event_pk, format_dict):
     df_bottles = df_bottles.dropna(axis=1, how='all')
     df_bottles, df_bottle_ignored = transform.remove_variable(df_bottles, format_dict['ignored_variable_list'])
 
-    print('Retrieve Corresponding CTD Data')
-    df_matched, ctd_metadata = get_matching_ctd_data(df_bottles)
+    for event, df_event in df_bottles.groupby(by=['event_pk', 'collected']):
+        # Loop through each event pk
+        print('Retrieve Corresponding CTD Data')
+        df_matched, ctd_metadata = get_matching_ctd_data(df_event.reset_index())
 
-    # Remove discard listed CTD variables
-    df_matched, df_ignored = transform.remove_variable(df_matched, format_dict['ctd_variable_list_to_ignore'])
+        # Remove discard listed CTD variables
+        df_matched, df_ignored = transform.remove_variable(df_matched, format_dict['ctd_variable_list_to_ignore'])
 
-    # Convert time data to a datetime object
-    df_matched, converted_columns = transform.convert_columns_to_datetime(df_matched, format_dict['time_variable_list'])
+        # Convert time data to a datetime object
+        df_matched, converted_columns = transform.convert_columns_to_datetime(df_matched,
+                                                                              format_dict['time_variable_list'])
 
-    # Rename variables for ERDDAP time, and depth
-    #  Time correspond to the sample collected time
-    #  Depth is the matching depth used for the CTD transducer pressure depth > line_out_depth
-    df_matched['time'] = df_matched['collected']  # Time correspond to the sample collected time
-    df_matched['depth'] = df_matched['sample_matching_depth']
+        # Rename variables for ERDDAP time, and depth
+        #  Time correspond to the sample collected time
+        #  Depth is the matching depth used for the CTD transducer pressure depth > line_out_depth
+        df_matched['time'] = df_matched['collected']  # Time correspond to the sample collected time
+        df_matched['depth'] = df_matched['sample_matching_depth']
 
-    # Rename some of the variables
-    for key in format_dict['rename_variables_dict'].keys():
-        df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
+        # Rename some of the variables
+        for key in format_dict['rename_variables_dict'].keys():
+            df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
 
-    # Sort columns
-    df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
+        # Sort columns
+        df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
 
-    # Add Index which will be transformed in coordinate in xarray
-    df_matched = df_matched.set_index(['depth'])
+        # Add Index which will be transformed in coordinate in xarray
+        df_matched = df_matched.set_index(['depth'])
 
-    # Remove empty columns
-    df_matched = df_matched.dropna(how='all', axis=1)
+        # Remove empty columns
+        df_matched = df_matched.dropna(how='all', axis=1)
 
-    # Merge metadata from bottles and CTD to fill up the netcdf attributes
-    metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
+        # Merge metadata from bottles and CTD to fill up the netcdf attributes
+        metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
 
-    # Define the netcdf file name to be created
-    netcdf_file_name_out = df_bottles['bottle_profile_id'][0] + '.nc'
 
-    # Create netcdf by converting the pandas DataFrame to an xarray
-    ds = erddap_output.convert_bottle_data_to_xarray(df_matched, netcdf_file_name_out,
-                                                     metadata_for_xarray, format_dict)
+        # Define the netcdf file name to be created
+        netcdf_file_name_out = df_event['bottle_profile_id'].unique()[0] + '.nc'
 
-    meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
+        # Create netcdf by converting the pandas DataFrame to an xarray
+        ds = erddap_output.convert_bottle_data_to_xarray(df_matched, netcdf_file_name_out,
+                                                         metadata_for_xarray, format_dict)
+
+        meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
 
     return
 
@@ -305,10 +309,11 @@ def get_event_pks_for_a_site(endpoint_list, station_name):
 def get_site_netcdf_files(station_name, format_dict):
     print('Get Site Specific related Event Pks')
     pk_list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name)
+    create_bottle_netcdf(pk_list['event_pk'], format_dict)
 
-    # Loop through each separate event_pk
-    for event_pk in pk_list['event_pk'].unique():
-        create_bottle_netcdf(event_pk, format_dict)
+    ## Loop through each separate event_pk
+    #for event_pk in pk_list['event_pk'].unique():
+    #    create_bottle_netcdf(event_pk, format_dict)
 
 
 def get_hakai_variable_order(format_dict):
