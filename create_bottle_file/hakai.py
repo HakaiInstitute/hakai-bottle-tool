@@ -81,8 +81,8 @@ def process_sample_data(event_pk,
                         ignored_variable_list,
                         time_variable_list,
                         string_columns_regexp):
-    # Get Data for this specific event_pk
-    filter_url = 'event_pk=' + str(event_pk)
+    # Get Data for the event_pks
+    filter_url = 'event_pk={' + ','.join([str(elem) for elem in event_pk]) + '}&limit=-1'
     df_raw, url, metadata = get_hakai_data(endpoint_list['endpoint'], filter_url)
 
     # If there's no output from API, just past back None values otherwise apply transformations
