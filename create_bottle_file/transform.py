@@ -79,8 +79,8 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
 
         else:  # Group data with groupby()
             # Get all the grouped stats
-            df_min = df.groupby(by=index_variable_list).min()
-            df_max = df.groupby(by=index_variable_list).max()
+            df_min = df.select_dtypes(include=np.number).groupby(by=index_variable_list).min()
+            df_max = df.select_dtypes(include=np.number).groupby(by=index_variable_list).max()
             df_count = df.groupby(by=index_variable_list).count()
 
             # Group strings of duplicates
@@ -88,7 +88,11 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
                 groupby(by=index_variable_list).transform(lambda x: ', '.join(np.unique(x))).drop_duplicates()
 
             # Get Mean values, for some reasons datetime variables aren't calculated in mean
-            df_mean = df.groupby(by=index_variable_list).mean()
+            df_mean = df.select_dtypes(include=np.number).groupby(by=index_variable_list).mean()
+            #FIXME Doesn't handle bool variables
+
+        # Stats columns.select_dtypes(include=np.number)
+        stats_columns = df_mean.select_dtypes(include=np.number).columns
 
         # Start combining aggregated data
         # Strings and values will be replaced by list and average values respectively, datetime will use min values
@@ -105,7 +109,7 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
         time_variables = df_min.dropna(how='all', axis=1).select_dtypes(['datetime', 'datetimetz']).columns
 
         # Get range difference between min and max values for numbers only
-        df_range_val = df_max[df_mean.columns]-df_min[df_mean.columns]
+        df_range_val = df_max[stats_columns]-df_min[stats_columns]
         df_range_time = df_max[time_variables] - df_min[time_variables]
         df_range_val[df_range_val == 0] = np.nan
 
@@ -126,7 +130,7 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
             df_range = df_range_val.join(df_range_time)
             df_replicates = df_count[df_range.columns]
 
-            # TODO remove values which are exactely the same, not sure if we should do that.
+            # TODO remove values which are exactly the same, not sure if we should do that.
 
             # Merge column names
             if type(df_range.columns[0]) is tuple:
