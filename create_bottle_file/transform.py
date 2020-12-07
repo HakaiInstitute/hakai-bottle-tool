@@ -65,6 +65,11 @@ def sort_column_order(df, column_to_order):
 def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot=''):
     if df.index.duplicated().any() or any(variable_to_pivot):
         if variable_to_pivot in df.columns:  # Group data by pivot
+            # If any values of variable_to_pivot
+            if any(df[variable_to_pivot]=='') or any(df[variable_to_pivot].isna()):
+                df.loc[(df[variable_to_pivot] == '') |
+                       (df[variable_to_pivot].isna()), variable_to_pivot] = 'UNKNOWN'
+
             # Get pivoted data frames with the different aggregations
             df_min = pd.pivot_table(df, index=index_variable_list, columns=variable_to_pivot, aggfunc='min')
             df_max = pd.pivot_table(df, index=index_variable_list, columns=variable_to_pivot, aggfunc='max')
