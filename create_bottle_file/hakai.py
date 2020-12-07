@@ -138,12 +138,46 @@ def combine_data_from_hakai_endpoints(event_pk,
             if 'df_joined' not in locals():
                 df_joined = df_temp
                 metadata_joined = metadata
+                df_joined_asof = df_temp
+
             else:
-                # Join new sample type to other samples for the same event_pk
+                # Allow a tolerance between the collected times.
+                #df_joined_asof = pd.merge_asof(df_joined_asof.reset_index(), df_temp.reset_index(),
+                #                              by='line_out_depth',
+                #                              on='collected',
+                #                              tolerance=pd.Timedelta('1hour'),
+                #                              allow_exact_matches=True)
+
+                #df_joined_asof = df_joined_asof.drop(['level_0', 'index'], axis=1)
+                # FIXME asof seems to be working we need to ignore the indexes as long df_joined is always the same
+                #  event pk we should be good. However those indexes columns should be merged again after.
+
+                # Join new sample type to other samples for the same event_pk and sampling time
                 df_joined = df_joined.merge(df_temp, left_index=True, right_index=True, how='outer')
                 metadata_joined = metadata_joined.merge(metadata, left_index=True, right_index=True, how='outer')
                 # TODO some collection time aren't always the exact number we could use pd.merge_asof and a time
                 #  tolerance to do that match
+
+                # TODO Track mismatched collected time
+
+    # Track the multiple collected time values per sample type
+    if len(df_joined.index.unique(level='collected')) > 1:
+        df_collected_time = df_joined.filter(like='_action')\
+            .rename(columns=lambda x: re.sub('_.*', '', x)).stack().swaplevel(i=5, j=6)\
+            .droplevel(level=6).reset_index().drop_duplicates().set_index('collected')
+
+        # Time info to a info_log
+        time_info = df_collected_time.reset_index()[
+            ['organization', 'work_area', 'site_id', 'event_pk']].drop_duplicates()
+        time_info['min_collected'] = df_joined.index.get_level_values('collected').min()
+        time_info['max_collected'] = df_joined.index.get_level_values('collected').max()
+        time_info['delta_collected'] = time_info['max_collected'] - time_info['min_collected']
+        time_info['delta_collected_hours'] = time_info['delta_collected'][0].total_seconds()/3600
+        time_info['n_collected'] = len(df_joined.index.get_level_values('collected').unique())
+        time_info['time_list'] = str(df_collected_time['level_5'].groupby('collected').apply(lambda x: ','.join(x)).to_dict())
+
+        with open('Collection_time_log.csv', 'a') as f:
+            time_info.to_csv(f, mode='a', header=f.tell() == 0, index=False, line_terminator='\n')
 
     # Add aggregated meta variables
     df_joined = transform.create_aggregated_meta_variables(df_joined)
@@ -192,7 +226,8 @@ def get_matching_ctd_data(df_bottles):
         df_ctd_site_specific_drops = df_ctd_site_specific_drops.sort_values(['matching_time'])
 
         # Find closest profile
-        df_bottles = pd.merge_asof(df_bottles, df_ctd_site_specific_drops[{'matching_time', 'ctd_cast_pk'}],
+        df_bottles = pd.merge_asof(df_bottles.sort_values('collected'),
+                                   df_ctd_site_specific_drops[{'matching_time', 'ctd_cast_pk'}],
                                    left_on=['collected'], right_on=['matching_time'], allow_exact_matches=True,
                                    direction='nearest')
 
@@ -208,7 +243,7 @@ def get_matching_ctd_data(df_bottles):
         df_ctd_profile = df_ctd_profile.add_prefix('CTD_')
         ctd_metadata = ctd_metadata.add_prefix('CTD*')
 
-        # Sort by depth both dataframes before merging them
+        # Sort by depth both dataFrames before merging them
         df_ctd_profile = df_ctd_profile.sort_values(['CTD_depth'])
         df_bottles = df_bottles.sort_values(['sample_matching_depth'])
 
