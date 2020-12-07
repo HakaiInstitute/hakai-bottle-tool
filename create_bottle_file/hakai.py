@@ -93,17 +93,20 @@ def process_sample_data(event_pk,
         # Make sure that dtype object columns have fillna values ''
         df_data[df_data.select_dtypes('object').columns] = df_data[df_data.select_dtypes('object').columns].fillna('')
 
+        # Drop any rows that have empty values within the index_variables
+        df_data = df_data.dropna(subset=index_variable_list).set_index(index_variable_list)
+
         # Index data
-        df_data, temp_index_list = transform.set_index_from_list(df_data, index_variable_list)
+        #df_data, temp_index_list = transform.set_index_from_list(df_data, index_variable_list)
 
         # Combine variables through a pivot or groupby if no pivot needed
         if 'pivot_variable' in endpoint_list:
             df_data = transform.regroup_data_by_index_and_pivot(df_data,
-                                                                temp_index_list,
+                                                                index_variable_list,
                                                                 endpoint_list['pivot_variable'])
         else:
             df_data = transform.regroup_data_by_index_and_pivot(df_data,
-                                                                temp_index_list)
+                                                                index_variable_list)
 
         # Add data type prefix to variable name
         df_data = df_data.add_prefix(get_prefix_name_from_hakai_endpoint_url(endpoint_list['endpoint']) + '_')
