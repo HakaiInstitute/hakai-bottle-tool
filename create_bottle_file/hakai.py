@@ -60,7 +60,7 @@ def generate_depth_matching_variable(df, index_variable_list):
     sample_depth = df.filter(like='pressure_transducer_depth').median(axis=1)
 
     # Get Pressure Transducer data first if available
-    df['sample_matching_depth'] = sample_depth
+    df.loc[df.index, 'sample_matching_depth'] = sample_depth
 
     # Fill missing values with line_out_depth values
     df = df.reset_index()  # remove indexes to have access to line_out_depth
