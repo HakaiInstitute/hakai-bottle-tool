@@ -247,7 +247,7 @@ def standardize_object_type(df, regexp_string, type, empty_value_prior, empty_va
     # Change type of the columns selected
     for var in columnToModify:
         if type == '|S':
-            df[var] = df[var].str.encode("ascii", errors='ignore').astype('|S')
+            df[var] = df[var].astype(str).str.encode("ascii", errors='ignore').astype('|S')
         else:
             df[var] = df[var].astype(type)
 
