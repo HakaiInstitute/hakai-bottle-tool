@@ -347,7 +347,7 @@ def get_event_pks_for_a_site(endpoint_list, station_name):
 def get_site_netcdf_files(station_name, format_dict):
     print('Get Site Specific related Event Pks')
     pk_list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name)
-    create_bottle_netcdf(pk_list['event_pk'], format_dict)
+    create_bottle_netcdf(pk_list['event_pk'].unique().tolist(), format_dict)
 
     ## Loop through each separate event_pk
     #for event_pk in pk_list['event_pk'].unique():
