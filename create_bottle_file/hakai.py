@@ -155,8 +155,8 @@ def combine_data_from_hakai_endpoints(event_pk,
 
     # Track the multiple collected time values per sample type
     if len(df_joined.index.unique(level='collected')) > 1:
-        df_collected_time = df_joined.filter(like='_action')\
-            .rename(columns=lambda x: re.sub('_.*', '', x)).stack().swaplevel(i=5, j=6)\
+        df_collected_time = df_joined.filter(like='_action') \
+            .rename(columns=lambda x: re.sub('_.*', '', x)).stack().swaplevel(i=5, j=6) \
             .droplevel(level=6).reset_index().drop_duplicates().set_index('collected')
 
         # Time info to a info_log
@@ -165,9 +165,10 @@ def combine_data_from_hakai_endpoints(event_pk,
         time_info['min_collected'] = df_joined.index.get_level_values('collected').min()
         time_info['max_collected'] = df_joined.index.get_level_values('collected').max()
         time_info['delta_collected'] = time_info['max_collected'] - time_info['min_collected']
-        time_info['delta_collected_hours'] = time_info['delta_collected'][0].total_seconds()/3600
+        time_info['delta_collected_hours'] = time_info['delta_collected'][0].total_seconds() / 3600
         time_info['n_collected'] = len(df_joined.index.get_level_values('collected').unique())
-        time_info['time_list'] = str(df_collected_time['level_5'].groupby('collected').apply(lambda x: ','.join(x)).to_dict())
+        time_info['time_list'] = str(
+            df_collected_time['level_5'].groupby('collected').apply(lambda x: ','.join(x)).to_dict())
 
         with open('Collection_time_log.csv', 'a') as f:
             time_info.to_csv(f, mode='a', header=f.tell() == 0, index=False, line_terminator='\n')
@@ -345,7 +346,9 @@ def create_bottle_netcdf(event_pk, format_dict):
 
     # Discard the ignored variables and empty ones
     df_bottles = df_bottles.dropna(axis=1, how='all')
-    df_bottles, df_bottle_ignored = transform.remove_variable(df_bottles, format_dict['ignored_variable_list'])
+    variables_to_ignore = [var for var in df_bottles.columns
+                           if re.search('|'.join(format_dict['ignored_variable_list']), var)]
+    df_bottles.drop(variables_to_ignore, axis='columns', inplace=True)
 
     for event, df_event in df_bottles.groupby(by=['event_pk', 'collected']):
         # Loop through each event pk
@@ -381,7 +384,6 @@ def create_bottle_netcdf(event_pk, format_dict):
         # Merge metadata from bottles and CTD to fill up the netcdf attributes
         metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
 
-
         # Define the netcdf file name to be created
         netcdf_file_name_out = df_event['bottle_profile_id'].unique()[0] + '.nc'
 
@@ -415,7 +417,7 @@ def get_site_netcdf_files(station_name, format_dict):
     create_bottle_netcdf(pk_list['event_pk'].unique().tolist(), format_dict)
 
     ## Loop through each separate event_pk
-    #for event_pk in pk_list['event_pk'].unique():
+    # for event_pk in pk_list['event_pk'].unique():
     #    create_bottle_netcdf(event_pk, format_dict)
 
 
