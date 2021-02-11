@@ -55,17 +55,13 @@ def get_hakai_data(endpoint_url, filter_url):
     return df, url, meta
 
 
-def generate_depth_matching_variable(df, index_variable_list):
+def generate_depth_matching_variable(df):
     # Find median values for pressure transducer
-    sample_depth = df.filter(like='pressure_transducer_depth').median(axis=1)
+    df['sample_matching_depth'] = df.filter(like='pressure_transducer_depth').median(axis=1)
 
-    # Get Pressure Transducer data first if available
-    df.loc[df.index, 'sample_matching_depth'] = sample_depth
-
-    # Fill missing values with line_out_depth values
-    df = df.reset_index()  # remove indexes to have access to line_out_depth
-    df['sample_matching_depth'] = df['sample_matching_depth'].fillna(df['line_out_depth'])
-    df, considered_indexes = transform.set_index_from_list(df, index_variable_list)  # Reapply indexes
+    # Fill values with second column
+    df.loc[df['sample_matching_depth'].isnull(), 'sample_matching_depth'] = df.loc[
+        df['sample_matching_depth'].isnull()].index.get_level_values('line_out_depth')
     return df
 
 
@@ -180,7 +176,7 @@ def combine_data_from_hakai_endpoints(event_pk,
     df_joined = transform.create_aggregated_meta_variables(df_joined)
 
     # Generate Matching Depth Variable and add indexing
-    df_joined = generate_depth_matching_variable(df_joined, format_dict['index_variable_list'])
+    df_joined = generate_depth_matching_variable(df_joined)
 
     # Make all missing value being np.nan and remove all empty columns
     df_joined.replace('', np.nan, inplace=True)
