@@ -206,6 +206,7 @@ def get_matching_ctd_data(df_bottles,
                           ctd_prefix='CTD_',
                           depth_tolerance_range=3,
                           depth_tolerance_ratio=0.15,
+                          bin_size=1,
                           hakai_ctd_endpoint='ctd/views/file/cast/data'
                           ):
 
@@ -253,8 +254,8 @@ def get_matching_ctd_data(df_bottles,
         ctd_station_id = ctd_prefix + ctd_station_id
 
         # Define time and  depth_bin matching variables and make sure it's the same format.
-        df_ctd['matching_depth'] = df_ctd[ctd_depth].round().astype('int64')
-        df_bottles['matching_depth'] = df_bottles[bottle_depth].round().astype('int64')
+        df_ctd['matching_depth'] = df_ctd[ctd_depth].div(bin_size).round().astype('int64')
+        df_bottles['matching_depth'] = df_bottles[bottle_depth].div(bin_size).round().astype('int64')
         df_bottles['matching_time'] = df_bottles[bottle_time]
         df_ctd['matching_time'] = df_ctd[ctd_time]
 
