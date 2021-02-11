@@ -291,7 +291,7 @@ def get_matching_ctd_data(df_bottles,
             in_tolerance = _within_depth_tolerance(df_bottles_time, ctd_depth, bottle_depth,
                                                    depth_tolerance_range, depth_tolerance_ratio)
             df_not_matched = df_bottles_time[in_tolerance == False][df_bottles.columns]
-            df_bottles_matched.append(df_bottles_time[in_tolerance])
+            df_bottles_matched = pd.concat([df_bottles_matched, df_bottles_time[in_tolerance]])
 
         # Then try to match whatever closest depth sample depth within the allowed time range
         if len(df_not_matched) > 0:
@@ -305,11 +305,12 @@ def get_matching_ctd_data(df_bottles,
             in_tolerance = _within_depth_tolerance(df_bottles_depth, ctd_depth, bottle_depth,
                                                    depth_tolerance_range, depth_tolerance_ratio)
             df_not_matched = df_bottles_depth[in_tolerance == False][df_bottles.columns]
-            df_bottles_matched.append(df_bottles_depth[in_tolerance])
+            df_bottles_matched = pd.concat([df_bottles_matched, df_bottles_depth[in_tolerance]])
 
         # Finally, keep unmatched bottle data with no possible match
         if len(df_not_matched) > 0:
-            df_bottles_matched.append(df_not_matched)
+            df_bottles_matched = pd.concat([df_bottles_matched, df_not_matched])
+
 
         # selected_cast_pks = df_bottles['ctd_cast_pk'].unique()
         #
