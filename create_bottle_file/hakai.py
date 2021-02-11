@@ -227,41 +227,44 @@ def get_matching_ctd_data(df_bottles,
         return (dD < depth_tolerance_range) | ((dD.div(df[bottle_depth]) - 1).abs() < depth_tolerance_ratio)
 
     # Get Matching CTD
-    # Get the list of event_pk for a specific site
     # Get Time Range around Sample Collection time
+    start_time_range = df_bottles[bottle_time].min() - time_range
+    end_time_range = df_bottles[bottle_time].max() + time_range
     if df_ctd is None:
         # Download data from the hakai api
         station_names = df_bottles[bottle_station_id].unique()
         if len(station_names) != 1:
             raise RuntimeError('More than one station is given for matching bottle and CTD data.')
 
-        start_time_range = (df_bottles['collected'].min() - time_range).strftime("%Y-%m-%d")
-        end_time_range = (df_bottles['collected'].max() + time_range).strftime("%Y-%m-%d")
-
         # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
-        filter_url = 'station=' + station_names[0] + '&start_dt>' + \
-                     start_time_range + '&start_dt<' + end_time_range + '&limit=-1&distinct'
+        filter_url = 'station=' + station_names[0] + \
+                     '&start_dt>' + start_time_range.strftime("%Y-%m-%d") + \
+                     '&start_dt<' + end_time_range.strftime("%Y-%m-%d")+ '&limit=-1&distinct'
         # Find closest Cast PK associated to a profile
-        df_ctd, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
+        df_ctd_in_range, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
+    else:
+        # Filter data that is within the time_range
+        df_ctd_in_range = df_ctd.loc[(df_ctd[ctd_time] >= start_time_range) & (df_ctd[ctd_time] <= end_time_range)]
+        ctd_metadata = None
 
     # If any profile is available merge it to the bottle data
-    if len(df_ctd) > 0:
+    if len(df_ctd_in_range) > 0:
         # Add CTD_ prefix to CTD variables
-        df_ctd = df_ctd.add_prefix(ctd_prefix)
+        df_ctd_in_range = df_ctd_in_range.add_prefix(ctd_prefix)
         ctd_depth = ctd_prefix + ctd_depth
         ctd_time = ctd_prefix + ctd_time
         ctd_profile_id = ctd_prefix + ctd_profile_id
         ctd_station_id = ctd_prefix + ctd_station_id
 
         # Define time and  depth_bin matching variables and make sure it's the same format.
-        df_ctd['matching_depth'] = df_ctd[ctd_depth].div(bin_size).round().astype('int64')
+        df_ctd_in_range['matching_depth'] = df_ctd_in_range[ctd_depth].div(bin_size).round().astype('int64')
         df_bottles['matching_depth'] = df_bottles[bottle_depth].div(bin_size).round().astype('int64')
         df_bottles['matching_time'] = df_bottles[bottle_time]
-        df_ctd['matching_time'] = df_ctd[ctd_time]
+        df_ctd_in_range['matching_time'] = df_ctd_in_range[ctd_time]
 
         # Find closest profile with the exact same depth
         df_bottles_closest_time_depth = pd.merge_asof(df_bottles.sort_values('matching_time'),
-                                                      df_ctd.sort_values(['matching_time']),
+                                                      df_ctd_in_range.sort_values(['matching_time']),
                                                       on='matching_time',
                                                       left_by=[bottle_station_id, 'matching_depth'],
                                                       right_by=[ctd_station_id, 'matching_depth'],
@@ -276,14 +279,14 @@ def get_matching_ctd_data(df_bottles,
         # First try to retrieve to the closest profile in time and then closest depth
         if len(df_not_matched) > 0:
             df_bottles_time = pd.merge_asof(df_not_matched.sort_values('matching_time'),
-                                            df_ctd.sort_values(['matching_time'])[
+                                            df_ctd_in_range.sort_values(['matching_time'])[
                                                 [ctd_station_id, ctd_profile_id, 'matching_time']],
                                             on='matching_time',
                                             left_by=[bottle_station_id],
                                             right_by=[ctd_station_id],
                                             allow_exact_matches=True, direction='nearest')
             df_bottles_time = pd.merge_asof(df_bottles_time.sort_values('matching_depth'),
-                                            df_ctd.sort_values(['matching_depth']),
+                                            df_ctd_in_range.sort_values(['matching_depth']),
                                             on='matching_depth',
                                             by=ctd_profile_id,
                                             suffixes=('','_ctd'),
@@ -297,7 +300,7 @@ def get_matching_ctd_data(df_bottles,
         # Then try to match whatever closest depth sample depth within the allowed time range
         if len(df_not_matched) > 0:
             df_bottles_depth = pd.merge_asof(df_not_matched.sort_values('matching_depth'),
-                                             df_ctd.sort_values(['matching_depth']),
+                                             df_ctd_in_range.sort_values(['matching_depth']),
                                              on='matching_depth',
                                              left_by=[bottle_station_id],
                                              right_by=[ctd_station_id],
@@ -346,7 +349,15 @@ def get_matching_ctd_data(df_bottles,
     return df_bottles_matched, ctd_metadata
 
 
-def create_bottle_netcdf(event_pk, format_dict):
+def create_bottle_netcdf(event_pk, format_dict,
+                         bottle_station_id='site_id',
+                         bottle_profile_id=['event_pk', 'collected'],
+                         bottle_time='collected',
+                         bottle_depth='sample_matching_depth',
+                         time_range=dt.timedelta(days=1),
+                         hakai_ctd_endpoint='ctd/views/file/cast/data'
+                         ):
+
     print('Collect Sample data for event pk: [' + str(event_pk) + ']')
     df_bottles, metadata = combine_data_from_hakai_endpoints(event_pk,
                                                              format_dict)
@@ -362,48 +373,60 @@ def create_bottle_netcdf(event_pk, format_dict):
     # Discard the ignored variables and empty ones
     df_bottles, df_ignored = transform.remove_variable(df_bottles, format_dict['ignored_variable_list'])
 
-    for event, df_event in df_bottles.groupby(by=['event_pk', 'collected']):
-        # Loop through each event pk
-        print('Retrieve Corresponding CTD Data')
-        df_matched, ctd_metadata = get_matching_ctd_data(df_event.reset_index())
+    # Loop through each stations and download all the data needed
+    for station, df_station in df_bottles.groupby(bottle_station_id):
+        # Get All the CTD data needed
+        # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
+        start_time_range = (df_station[bottle_time].min() - time_range).strftime("%Y-%m-%d")
+        end_time_range = (df_station[bottle_time].max() + time_range).strftime("%Y-%m-%d")
+        filter_url = 'station=' + station + '&start_dt>' + \
+                     start_time_range + '&start_dt<' + end_time_range + '&direction_flag=d&limit=-1&distinct'
+        # Find closest Cast PK associated to a profile
+        df_ctd, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
 
-        # Remove discard listed CTD variables
-        df_matched, df_ignored = transform.remove_variable(df_matched, format_dict['ctd_variable_list_to_ignore'])
+        for event, df_event in df_station.groupby(by=bottle_profile_id):
+            # Loop through each event pk
+            print('Retrieve Corresponding CTD Data')
+            df_matched, ctd_metadata_returned = get_matching_ctd_data(df_event.reset_index(),
+                                                             df_ctd=df_ctd, time_range=time_range)
+            if ctd_metadata_returned: # Retrieve metadata if not already available
+                ctd_metadata = ctd_metadata_returned
 
-        # Convert time data to a datetime object
-        df_matched, converted_columns = transform.convert_columns_to_datetime(df_matched,
-                                                                              format_dict['time_variable_list'])
+            # Drop CTD variables to be ignored
+            df_matched, df_ignored = transform.remove_variable(df_matched, format_dict['ctd_variable_list_to_ignore'])
 
-        # Rename variables for ERDDAP time, and depth
-        #  Time correspond to the sample collected time
-        #  Depth is the matching depth used for the CTD transducer pressure depth > line_out_depth
-        df_matched['time'] = df_matched['collected']  # Time correspond to the sample collected time
-        df_matched['depth'] = df_matched['sample_matching_depth']
+            # Convert time data to a datetime object
+            df_matched, converted_columns = transform.convert_columns_to_datetime(df_matched,
+                                                                                  format_dict['time_variable_list'])
 
-        # Rename some of the variables
-        for key in format_dict['rename_variables_dict'].keys():
-            df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
+            # Rename variables for ERDDAP time, and depth
+            #  Time correspond to the sample collected time
+            #  Depth is the matching depth used for the CTD transducer pressure depth > line_out_depth
+            df_matched['time'] = df_matched['collected']  # Time correspond to the sample collected time
+            df_matched['depth'] = df_matched['sample_matching_depth']
 
-        # Sort columns
-        df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
+            # Rename some of the variables
+            for key in format_dict['rename_variables_dict'].keys():
+                df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
 
-        # Add Index which will be transformed in coordinate in xarray
-        df_matched = df_matched.set_index(['depth'])
+            # Sort columns
+            df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
 
-        # Remove empty columns
-        df_matched = df_matched.dropna(how='all', axis=1)
+            # Add Index which will be transformed in coordinate in xarray
+            df_matched = df_matched.set_index(['depth'])
 
-        # Merge metadata from bottles and CTD to fill up the netcdf attributes
-        metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
+            # Remove empty columns
+            df_matched = df_matched.dropna(how='all', axis=1)
 
-        # Define the netcdf file name to be created
-        netcdf_file_name_out = df_event['bottle_profile_id'].unique()[0] + '.nc'
+            # Merge metadata from bottles and CTD to fill up the netcdf attributes
+            metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
 
-        # Create netcdf by converting the pandas DataFrame to an xarray
-        ds = erddap_output.convert_bottle_data_to_xarray(df_matched, netcdf_file_name_out,
-                                                         metadata_for_xarray, format_dict)
+            # Create netcdf by converting the pandas DataFrame to an xarray
+            netcdf_file_name_out = df_event['bottle_profile_id'].unique()[0] + '.nc'
+            ds = erddap_output.convert_bottle_data_to_xarray(df_matched, netcdf_file_name_out,
+                                                             metadata_for_xarray, format_dict)
 
-        meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
+            meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
 
     return
 
