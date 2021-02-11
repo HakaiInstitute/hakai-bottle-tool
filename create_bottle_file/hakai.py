@@ -360,10 +360,7 @@ def create_bottle_netcdf(event_pk, format_dict):
                                       '_EventPk' + df_bottles['event_pk'].apply(str)
 
     # Discard the ignored variables and empty ones
-    df_bottles = df_bottles.dropna(axis=1, how='all')
-    variables_to_ignore = [var for var in df_bottles.columns
-                           if re.search('|'.join(format_dict['ignored_variable_list']), var)]
-    df_bottles.drop(variables_to_ignore, axis='columns', inplace=True)
+    df_bottles, df_ignored = transform.remove_variable(df_bottles, format_dict['ignored_variable_list'])
 
     for event, df_event in df_bottles.groupby(by=['event_pk', 'collected']):
         # Loop through each event pk
