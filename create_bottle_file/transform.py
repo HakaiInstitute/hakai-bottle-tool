@@ -3,35 +3,35 @@ import pandas as pd
 import datetime as dt
 
 
-def separate_constant_variables(df, index_list):
-    constant_columns = df.columns[df.nunique() <= 1]
-
-    # Remove constant value, keep one for each index
-    df_meta = df.filter(items=constant_columns).reset_index().drop_duplicates().set_index(index_list)
-
-    # Get Variables that aren't constant
-    df_data = df.drop(constant_columns, axis=1)
-    return df_data, df_meta, constant_columns
-
-
-def set_index_from_list(df, index_variable_list):
-    # Remove any index if there some already
-    df = df.reset_index()
-
-    # Keep only the column to become index that are available and have no NaN/empty values associated
-    considered_indexes = np.array(index_variable_list)[np.in1d(index_variable_list,  df.columns)].tolist()
-    considered_indexes = np.array(considered_indexes)[~np.array(df[considered_indexes].isna().any(axis=0))].tolist()
-
-    # Define new indexes and sort
-    df = df.set_index(considered_indexes).sort_index().drop(['index'], axis=1)
-
-    return df, considered_indexes
+# def separate_constant_variables(df, index_list):
+#     constant_columns = df.columns[df.nunique() <= 1]
+#
+#     # Remove constant value, keep one for each index
+#     df_meta = df.filter(items=constant_columns).reset_index().drop_duplicates().set_index(index_list)
+#
+#     # Get Variables that aren't constant
+#     df_data = df.drop(constant_columns, axis=1)
+#     return df_data, df_meta, constant_columns
 
 
-def reduce_to_index(df):
-    index_names = df.index.names
-    df_reduced = df.reset_index().drop_duplicates().set_index(index_names)
-    return df_reduced
+# def set_index_from_list(df, index_variable_list):
+#     # Remove any index if there some already
+#     df = df.reset_index()
+#
+#     # Keep only the column to become index that are available and have no NaN/empty values associated
+#     considered_indexes = np.array(index_variable_list)[np.in1d(index_variable_list,  df.columns)].tolist()
+#     considered_indexes = np.array(considered_indexes)[~np.array(df[considered_indexes].isna().any(axis=0))].tolist()
+#
+#     # Define new indexes and sort
+#     df = df.set_index(considered_indexes).sort_index().drop(['index'], axis=1)
+#
+#     return df, considered_indexes
+
+
+# def reduce_to_index(df):
+#     index_names = df.index.names
+#     df_reduced = df.reset_index().drop_duplicates().set_index(index_names)
+#     return df_reduced
 
 
 def remove_variable(df, var_list_to_remove):
@@ -44,9 +44,9 @@ def remove_variable(df, var_list_to_remove):
     return df_without_variables, df_removed_variables
 
 
-def remove_empty_columns(df):
-    df = df.dropna(axis=1, how='all')
-    return df
+# def remove_empty_columns(df):
+#     df = df.dropna(axis=1, how='all')
+#     return df
 
 
 def sort_column_order(df, column_to_order):
@@ -221,9 +221,9 @@ def regroup_data_by_index_and_pivot(df, index_variable_list, variable_to_pivot='
     return df_out
 
 
-def create_id_variable(df, id_name, id_variables):
-    df[id_name] = df[id_variables[0]].str.cat(df[id_variables[1:]].astype(str), sep="_").astype(str)
-    return df
+# def create_id_variable(df, id_name, id_variables):
+#     df[id_name] = df[id_variables[0]].str.cat(df[id_variables[1:]].astype(str), sep="_").astype(str)
+#     return df
 
 
 def convert_columns_to_datetime(df, regexp_string):

@@ -51,7 +51,6 @@ def get_hakai_data(endpoint_url, filter_url):
             df[bool_variables].astype('bool')
 
         # Text data is kept has object for now
-
     return df, url, meta
 
 
@@ -181,7 +180,6 @@ def combine_data_from_hakai_endpoints(event_pk,
 
     # Make all missing value being np.nan and remove all empty columns
     df_joined.replace('', np.nan, inplace=True)
-    # df_joined = transform.remove_empty_columns(df_joined)
 
     # Remove indexation
     df_joined = df_joined.reset_index()
@@ -363,7 +361,6 @@ def create_bottle_netcdf(event_pk, format_dict,
                                                              format_dict)
 
     # Generate a profile_id variable
-    # df_bottles = transform.create_id_variable(df_bottles, 'profile_id', format_dict['cdm_variables'])
     df_bottles['bottle_profile_id'] = df_bottles['organization'] + \
                                       '_' + df_bottles['work_area'] + \
                                       '_' + df_bottles['site_id'] + \
