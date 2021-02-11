@@ -198,75 +198,147 @@ def combine_data_from_hakai_endpoints(event_pk,
     return df_joined, metadata_joined
 
 
-def get_matching_ctd_data(df_bottles):
+def get_matching_ctd_data(df_bottles,
+                          df_ctd=None,
+                          time_range=dt.timedelta(days=1),
+                          ctd_profile_id='hakai_id',
+                          bottle_profile_id='collected',
+                          ctd_station_id='station',
+                          bottle_station_id='site_id',
+                          ctd_depth='pressure',
+                          bottle_depth='sample_matching_depth',
+                          ctd_time='start_dt',
+                          bottle_time='collected',
+                          ctd_prefix='CTD_',
+                          depth_tolerance_range=3,
+                          depth_tolerance_ratio=0.15,
+                          hakai_ctd_endpoint='ctd/views/file/cast/data'
+                          ):
+    def _within_depth_tolerance(df, bottle_depth, ctd_depth, depth_tolerance_range, depth_tolerance_ratio):
+        dD = (df[ctd_depth] - df[bottle_depth]).abs()
+        return (dD < depth_tolerance_range) | ((dD.div(df[bottle_depth]) - 1).abs() < depth_tolerance_ratio)
+
     # Get Matching CTD
     # Get the list of event_pk for a specific site
     # Get Time Range around Sample Collection time
-    TIME_RANGE = dt.timedelta(days=1)  # days #TODO review interval to get the CTD data
-    station_name = df_bottles['site_id'].unique()
-    start_time_range = (df_bottles['collected'].min() - TIME_RANGE).strftime("%Y-%m-%d")
-    end_time_range = (df_bottles['collected'].max() + TIME_RANGE).strftime("%Y-%m-%d")
+    if df_ctd is None:
+        # Download data from the hakai api
+        station_names = df_bottles[bottle_station_id].unique()
+        if len(station_names) != 1:
+            raise RuntimeError('More than one station is given for matching bottle and CTD data.')
 
-    # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
-    filter_url = 'fields=station,ctd_cast_pk,start_dt,bottom_dt,end_dt&station=' + station_name[0] + '&start_dt>' + \
-                 start_time_range + '&start_dt<' + end_time_range + '&limit=-1&distinct'
-    # TODO handle multiple sites: Not sure if that's necessary','.join(map(str,selected_cast_pks))
+        start_time_range = (df_bottles['collected'].min() - time_range).strftime("%Y-%m-%d")
+        end_time_range = (df_bottles['collected'].max() + time_range).strftime("%Y-%m-%d")
 
-    endpoint_url = 'ctd/views/file/cast/data'
-
-    # Find closest Cast PK associated to a profile
-    df_ctd_site_specific_drops, url, ctd_metadata = get_hakai_data(endpoint_url, filter_url)
+        # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
+        filter_url = 'station=' + station_names[0] + '&start_dt>' + \
+                     start_time_range + '&start_dt<' + end_time_range + '&limit=-1&distinct'
+        # Find closest Cast PK associated to a profile
+        df_ctd, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
 
     # If any profile is available merge it to the bottle data
-    if len(df_ctd_site_specific_drops) > 0:
-        # Extract matching time from CTD data
-        df_ctd_site_specific_drops['matching_time'] = df_ctd_site_specific_drops['start_dt']
+    if len(df_ctd) > 0:
+        # Add CTD_ prefix to CTD variables
+        df_ctd = df_ctd.add_prefix(ctd_prefix)
+        ctd_depth = ctd_prefix + ctd_depth
+        ctd_time = ctd_prefix + ctd_time
+        ctd_profile_id = ctd_prefix + ctd_profile_id
+        ctd_station_id = ctd_prefix + ctd_station_id
 
-        # Sort profiles in time
-        df_ctd_site_specific_drops = df_ctd_site_specific_drops.sort_values(['matching_time'])
+        # Define time and  depth_bin matching variables and make sure it's the same format.
+        df_ctd['matching_depth'] = df_ctd[ctd_depth].round().astype('int64')
+        df_bottles['matching_depth'] = df_bottles[bottle_depth].round().astype('int64')
+        df_bottles['matching_time'] = df_bottles[bottle_time]
+        df_ctd['matching_time'] = df_ctd[ctd_time]
 
-        # Find closest profile
-        df_bottles = pd.merge_asof(df_bottles.sort_values('collected'),
-                                   df_ctd_site_specific_drops[{'matching_time', 'ctd_cast_pk'}],
-                                   left_on=['collected'], right_on=['matching_time'], allow_exact_matches=True,
-                                   direction='nearest')
+        # Find closest profile with the exact same depth
+        df_bottles_closest_time_depth = pd.merge_asof(df_bottles.sort_values('matching_time'),
+                                                      df_ctd.sort_values(['matching_time']),
+                                                      on='matching_time',
+                                                      left_by=[bottle_station_id, 'matching_depth'],
+                                                      right_by=[ctd_station_id, 'matching_depth'],
+                                                      allow_exact_matches=True, direction='nearest')
 
-        selected_cast_pks = df_bottles['ctd_cast_pk'].unique()
+        # Retrieve bottle data with matching depths and remove those not matching from df_bottles
+        in_tolerance = _within_depth_tolerance(df_bottles_closest_time_depth, ctd_depth, bottle_depth,
+                                               depth_tolerance_range, depth_tolerance_ratio)
+        df_not_matched = df_bottles_closest_time_depth[in_tolerance == False][df_bottles.columns]
+        df_bottles_matched = df_bottles_closest_time_depth[in_tolerance]
 
-        # Get the corresponding data from the API (ignore CTD with depth flagged: Seabird Flag is -9.99E-29)
-        filter_url = 'ctd_cast_pk={' + ','.join(map(str, selected_cast_pks)) + \
-                     '}&direction_flag=d&depth!=-9.99E-29&limit=-1'
-        df_ctd_profile, url, ctd_metadata = get_hakai_data(endpoint_url, filter_url)
-        # FIXME Make the download compatible with multiple cast pks
+        # First try to retrieve to the closest profile in time and then closest depth
+        if len(df_not_matched) > 0:
+            df_bottles_time = pd.merge_asof(df_not_matched.sort_values('matching_time'),
+                                            df_ctd.sort_values(['matching_time'])[
+                                                [ctd_station_id, ctd_profile_id, 'matching_time']],
+                                            on='matching_time',
+                                            left_by=[bottle_station_id],
+                                            right_by=[ctd_station_id],
+                                            allow_exact_matches=True, direction='nearest')
+            df_bottles_time = pd.merge_asof(df_bottles_time.sort_values('matching_depth'),
+                                            df_ctd.sort_values(['matching_depth']),
+                                            on='matching_depth',
+                                            by=ctd_profile_id,
+                                            suffixes=('','_ctd'),
+                                            allow_exact_matches=True, direction='nearest')
+            # Verify if matched data is within tolerance
+            in_tolerance = _within_depth_tolerance(df_bottles_time, ctd_depth, bottle_depth,
+                                                   depth_tolerance_range, depth_tolerance_ratio)
+            df_not_matched = df_bottles_time[in_tolerance == False][df_bottles.columns]
+            df_bottles_matched.append(df_bottles_time[in_tolerance])
 
-        # Rename add CTD_ prefix to variables
-        df_ctd_profile = df_ctd_profile.add_prefix('CTD_')
-        ctd_metadata = ctd_metadata.add_prefix('CTD*')
+        # Then try to match whatever closest depth sample depth within the allowed time range
+        if len(df_not_matched) > 0:
+            df_bottles_depth = pd.merge_asof(df_not_matched.sort_values('matching_depth'),
+                                             df_ctd.sort_values(['matching_depth']),
+                                             on='matching_depth',
+                                             left_by=[bottle_station_id],
+                                             right_by=[ctd_station_id],
+                                             suffixes=('', '_ctd'),
+                                             allow_exact_matches=True, direction='nearest')
+            in_tolerance = _within_depth_tolerance(df_bottles_depth, ctd_depth, bottle_depth,
+                                                   depth_tolerance_range, depth_tolerance_ratio)
+            df_not_matched = df_bottles_depth[in_tolerance == False][df_bottles.columns]
+            df_bottles_matched.append(df_bottles_depth[in_tolerance])
 
-        # Sort by depth both dataFrames before merging them
-        df_ctd_profile = df_ctd_profile.sort_values(['CTD_depth'])
-        df_bottles = df_bottles.sort_values(['sample_matching_depth'])
+        # Finally, keep unmatched bottle data with no possible match
+        if len(df_not_matched) > 0:
+            df_bottles_matched.append(df_not_matched)
 
-        # Make sure that the sample matching depth is same type as CTD.depth
-        df_bottles['sample_matching_depth'] = df_bottles['sample_matching_depth'].astype('float64')
-        # Match CTD with Samples
-        df_with_matched_ctd = pd.merge_asof(df_bottles, df_ctd_profile,
-                                            left_on='sample_matching_depth', right_on='CTD_depth',
-                                            left_by='ctd_cast_pk', right_by='CTD_ctd_cast_pk', direction='nearest')
-
-        # TODO add range limit in meters that depth values can be with be matched with.
-        #  Could be done after the fact with a flag based on percentage of the depth
-        # TODO add another step for if CTD from closest drop in time do not reach the maximum sampled depth. Could look
-        #  at other profiles completed within the time interval
+        # selected_cast_pks = df_bottles['ctd_cast_pk'].unique()
+        #
+        # # Get the corresponding data from the API (ignore CTD with depth flagged: Seabird Flag is -9.99E-29)
+        # filter_url = 'ctd_cast_pk={' + ','.join(map(str, selected_cast_pks)) + \
+        #              '}&direction_flag=d&depth!=-9.99E-29&limit=-1'
+        # df_ctd_profile, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
+        #
+        # # Rename add CTD_ prefix to variables
+        # df_ctd_profile = df_ctd_profile.add_prefix('CTD_')
+        # ctd_metadata = ctd_metadata.add_prefix('CTD*')
+        #
+        # # Sort by depth both dataFrames before merging them
+        # df_ctd_profile = df_ctd_profile.sort_values(['CTD_depth'])
+        # df_bottles = df_bottles.sort_values(['sample_matching_depth'])
+        #
+        # # Make sure that the sample matching depth is same type as CTD.depth
+        # df_bottles['sample_matching_depth'] = df_bottles['sample_matching_depth'].astype('float64')
+        # # Match CTD with Samples
+        # df_with_matched_ctd = pd.merge_asof(df_bottles, df_ctd_profile,
+        #                                     left_on='sample_matching_depth', right_on='CTD_depth',
+        #                                     left_by='ctd_cast_pk', right_by='CTD_ctd_cast_pk', direction='nearest')
+        #
+        # # TODO add range limit in meters that depth values can be with be matched with.
+        # #  Could be done after the fact with a flag based on percentage of the depth
+        # # TODO add another step for if CTD from closest drop in time do not reach the maximum sampled depth. Could look
+        # #  at other profiles completed within the time interval
     else:
         # If no CTD data available just give back the bottle data still.
-        df_with_matched_ctd = df_bottles
+        df_bottles_matched = df_bottles
 
-    return df_with_matched_ctd, ctd_metadata
+    return df_bottles_matched, ctd_metadata
 
 
 def create_bottle_netcdf(event_pk, format_dict):
-    print('Collect Sample data for event pk: [' + str(event_pk)+']')
+    print('Collect Sample data for event pk: [' + str(event_pk) + ']')
     df_bottles, metadata = combine_data_from_hakai_endpoints(event_pk,
                                                              format_dict)
 
