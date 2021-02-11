@@ -96,9 +96,6 @@ def process_sample_data(event_pk,
         # Drop any rows that have empty values within the index_variables
         df_data = df_data.dropna(subset=index_variable_list).set_index(index_variable_list)
 
-        # Index data
-        #df_data, temp_index_list = transform.set_index_from_list(df_data, index_variable_list)
-
         # Combine variables through a pivot or groupby if no pivot needed
         if 'pivot_variable' in endpoint_list:
             df_data = transform.regroup_data_by_index_and_pivot(df_data,
@@ -142,13 +139,13 @@ def combine_data_from_hakai_endpoints(event_pk,
 
             else:
                 # Allow a tolerance between the collected times.
-                #df_joined_asof = pd.merge_asof(df_joined_asof.reset_index(), df_temp.reset_index(),
+                # df_joined_asof = pd.merge_asof(df_joined_asof.reset_index(), df_temp.reset_index(),
                 #                              by='line_out_depth',
                 #                              on='collected',
                 #                              tolerance=pd.Timedelta('1hour'),
                 #                              allow_exact_matches=True)
 
-                #df_joined_asof = df_joined_asof.drop(['level_0', 'index'], axis=1)
+                # df_joined_asof = df_joined_asof.drop(['level_0', 'index'], axis=1)
                 # FIXME asof seems to be working we need to ignore the indexes as long df_joined is always the same
                 #  event pk we should be good. However those indexes columns should be merged again after.
 
