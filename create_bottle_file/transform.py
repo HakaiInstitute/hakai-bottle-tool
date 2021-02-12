@@ -326,7 +326,8 @@ def create_aggregated_meta_variables(df):
     df['gather_lat'] = df_gather_lat.aggregate(['median'], axis=1)
     df['gather_long'] = df_gather_long.aggregate(['median'], axis=1)
 
-    df['pressure_transducer_depth'] = df.filter(regex='pressure_transducer_depth$').select_dtypes('number').aggregate(['median'], axis=1)
+    df['pressure_transducer_depth'] = df.filter(regex='pressure_transducer_depth$').select_dtypes('number').aggregate(
+        ['median'], axis=1)
 
     # Remove columns that have been aggregated we assume that all have the same values
     df = df[df.columns.drop(list(df.filter(
