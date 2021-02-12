@@ -412,7 +412,7 @@ def create_bottle_netcdf(event_pk, format_dict,
 
             # Create netcdf by converting the pandas DataFrame to an xarray
             netcdf_file_name_out = df_event['bottle_profile_id'].unique()[0] + '.nc'
-            ds = erddap_output.convert_bottle_data_to_xarray(df_matched, netcdf_file_name_out,
+            ds = erddap_output.convert_bottle_data_to_xarray(df_matched.sort_index(), netcdf_file_name_out,
                                                              metadata_for_xarray, format_dict)
 
             meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
