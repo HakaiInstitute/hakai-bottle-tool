@@ -305,33 +305,6 @@ def get_matching_ctd_data(df_bottles,
         if len(df_not_matched) > 0:
             df_bottles_matched = pd.concat([df_bottles_matched, df_not_matched])
 
-
-        # selected_cast_pks = df_bottles['ctd_cast_pk'].unique()
-        #
-        # # Get the corresponding data from the API (ignore CTD with depth flagged: Seabird Flag is -9.99E-29)
-        # filter_url = 'ctd_cast_pk={' + ','.join(map(str, selected_cast_pks)) + \
-        #              '}&direction_flag=d&depth!=-9.99E-29&limit=-1'
-        # df_ctd_profile, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
-        #
-        # # Rename add CTD_ prefix to variables
-        # df_ctd_profile = df_ctd_profile.add_prefix('CTD_')
-        # ctd_metadata = ctd_metadata.add_prefix('CTD*')
-        #
-        # # Sort by depth both dataFrames before merging them
-        # df_ctd_profile = df_ctd_profile.sort_values(['CTD_depth'])
-        # df_bottles = df_bottles.sort_values(['sample_matching_depth'])
-        #
-        # # Make sure that the sample matching depth is same type as CTD.depth
-        # df_bottles['sample_matching_depth'] = df_bottles['sample_matching_depth'].astype('float64')
-        # # Match CTD with Samples
-        # df_with_matched_ctd = pd.merge_asof(df_bottles, df_ctd_profile,
-        #                                     left_on='sample_matching_depth', right_on='CTD_depth',
-        #                                     left_by='ctd_cast_pk', right_by='CTD_ctd_cast_pk', direction='nearest')
-        #
-        # # TODO add range limit in meters that depth values can be with be matched with.
-        # #  Could be done after the fact with a flag based on percentage of the depth
-        # # TODO add another step for if CTD from closest drop in time do not reach the maximum sampled depth. Could look
-        # #  at other profiles completed within the time interval
     else:
         # If no CTD data available just give back the bottle data still.
         df_bottles_matched = df_bottles
