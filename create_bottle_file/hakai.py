@@ -72,19 +72,13 @@ def get_prefix_name_from_hakai_endpoint_url(url):
 def process_sample_data(event_pk,
                         endpoint_list,
                         index_variable_list,
-                        meta_variable_list,
-                        ignored_variable_list,
-                        time_variable_list,
-                        string_columns_regexp):
+                        ):
     # Get Data for the event_pks
     filter_url = 'event_pk={' + ','.join([str(elem) for elem in event_pk]) + '}&limit=-1'
-    df_raw, url, metadata = get_hakai_data(endpoint_list['endpoint'], filter_url)
+    df_data, url, metadata = get_hakai_data(endpoint_list['endpoint'], filter_url)
 
     # If there's no output from API, just past back None values otherwise apply transformations
-    if not df_raw.empty:
-        # Work on a copy
-        df_data = df_raw.copy()
-
+    if not df_data.empty:
         # Make sure that dtype object columns have fillna values ''
         df_data[df_data.select_dtypes('object').columns] = df_data[df_data.select_dtypes('object').columns].fillna('')
 
