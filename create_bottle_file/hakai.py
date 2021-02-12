@@ -424,13 +424,16 @@ def create_bottle_netcdf(event_pk, format_dict,
                                                              metadata_for_xarray, format_dict)
 
             meta_dict = erddap_output.compile_netcdf_variable_and_attributes(ds, 'Hakai_bottle_files_variables.csv')
-
     return
 
 
 # Get the list of event_pk for a specific site
-def get_event_pks_for_a_site(endpoint_list, station_name):
+def get_event_pks_for_a_site(endpoint_list, station_name,start_time=None, end_time=None):
     filter_url = 'fields=site_id,event_pk,collected&limit=-1&distinct&site_id=' + station_name
+    if start_time:
+        filter_url = filter_url+'&collected>'+start_time
+    if end_time:
+        filter_url = filter_url+'&collected<'+end_time
 
     for ii in endpoint_list:
         df, url, meta = get_hakai_data(endpoint_list[ii]['endpoint'], filter_url)
@@ -443,14 +446,11 @@ def get_event_pks_for_a_site(endpoint_list, station_name):
     return df_joined
 
 
-def get_site_netcdf_files(station_name, format_dict):
+def get_site_netcdf_files(station_name, format_dict,start_time=None, end_time=None):
     print('Get Site Specific related Event Pks')
-    pk_list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name)
+    pk_list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name,
+                                       start_time=start_time, end_time=end_time)
     create_bottle_netcdf(pk_list['event_pk'].unique().tolist(), format_dict)
-
-    ## Loop through each separate event_pk
-    # for event_pk in pk_list['event_pk'].unique():
-    #    create_bottle_netcdf(event_pk, format_dict)
 
 
 def get_hakai_variable_order(format_dict):
