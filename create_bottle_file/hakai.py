@@ -229,7 +229,7 @@ def get_matching_ctd_data(df_bottles,
         # Get from Hakai API data, CTD data collected for a specific site over a time range predefined by the user
         filter_url = 'station=' + station_names[0] + \
                      '&start_dt>' + start_time_range.strftime("%Y-%m-%d") + \
-                     '&start_dt<' + end_time_range.strftime("%Y-%m-%d")+ '&limit=-1&distinct'
+                     '&start_dt<' + end_time_range.strftime("%Y-%m-%d") + '&limit=-1&distinct'
         # Find closest Cast PK associated to a profile
         df_ctd_in_range, url, ctd_metadata = get_hakai_data(hakai_ctd_endpoint, filter_url)
     else:
@@ -279,7 +279,7 @@ def get_matching_ctd_data(df_bottles,
                                             df_ctd_in_range.sort_values(['matching_depth']),
                                             on='matching_depth',
                                             by=ctd_profile_id,
-                                            suffixes=('','_ctd'),
+                                            suffixes=('', '_ctd'),
                                             allow_exact_matches=True, direction='nearest')
             # Verify if matched data is within tolerance
             in_tolerance = _within_depth_tolerance(df_bottles_time, ctd_depth, bottle_depth,
@@ -347,7 +347,6 @@ def create_bottle_netcdf(event_pk, format_dict,
                          time_range=dt.timedelta(days=1),
                          hakai_ctd_endpoint='ctd/views/file/cast/data'
                          ):
-
     print('Collect Sample data for event pk: [' + str(event_pk) + ']')
     df_bottles, metadata = combine_data_from_hakai_endpoints(event_pk,
                                                              format_dict)
@@ -377,8 +376,8 @@ def create_bottle_netcdf(event_pk, format_dict,
             # Loop through each event pk
             print('Retrieve Corresponding CTD Data')
             df_matched, ctd_metadata_returned = get_matching_ctd_data(df_event.reset_index(),
-                                                             df_ctd=df_ctd, time_range=time_range)
-            if ctd_metadata_returned: # Retrieve metadata if not already available
+                                                                      df_ctd=df_ctd, time_range=time_range)
+            if ctd_metadata_returned:  # Retrieve metadata if not already available
                 ctd_metadata = ctd_metadata_returned
 
             # Drop CTD variables to be ignored
@@ -396,7 +395,8 @@ def create_bottle_netcdf(event_pk, format_dict,
 
             # Rename some of the variables
             for key in format_dict['rename_variables_dict'].keys():
-                df_matched = df_matched.rename(columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
+                df_matched = df_matched.rename(
+                    columns=lambda x: re.sub(key, format_dict['rename_variables_dict'][key], x))
 
             # Sort columns
             df_matched = transform.sort_column_order(df_matched, format_dict['variables_final_order'])
@@ -420,12 +420,12 @@ def create_bottle_netcdf(event_pk, format_dict,
 
 
 # Get the list of event_pk for a specific site
-def get_event_pks_for_a_site(endpoint_list, station_name,start_time=None, end_time=None):
+def get_event_pks_for_a_site(endpoint_list, station_name, start_time=None, end_time=None):
     filter_url = 'fields=site_id,event_pk,collected&limit=-1&distinct&site_id=' + station_name
     if start_time:
-        filter_url = filter_url+'&collected>'+start_time
+        filter_url = filter_url + '&collected>' + start_time
     if end_time:
-        filter_url = filter_url+'&collected<'+end_time
+        filter_url = filter_url + '&collected<' + end_time
 
     for ii in endpoint_list:
         df, url, meta = get_hakai_data(endpoint_list[ii]['endpoint'], filter_url)
@@ -438,7 +438,7 @@ def get_event_pks_for_a_site(endpoint_list, station_name,start_time=None, end_ti
     return df_joined
 
 
-def get_site_netcdf_files(station_name, format_dict,start_time=None, end_time=None):
+def get_site_netcdf_files(station_name, format_dict, start_time=None, end_time=None):
     print('Get Site Specific related Event Pks')
     pk_list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name,
                                        start_time=start_time, end_time=end_time)
@@ -452,5 +452,4 @@ def get_hakai_variable_order(format_dict):
         sample_type_name = get_prefix_name_from_hakai_endpoint_url(format_dict['endpoint_list'][ii]['endpoint'])
         df, url, meta = get_hakai_data(format_dict['endpoint_list'][ii]['endpoint'], 'limit=1')
         variables_order.extend(sample_type_name + '_([a-zA-Z0-9_]*_){0,1}' + df.columns)
-
     return variables_order
