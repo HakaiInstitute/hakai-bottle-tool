@@ -116,37 +116,35 @@ def process_sample_data(event_pk,
 def combine_data_from_hakai_endpoints(event_pk,
                                       format_dict):
     print('Process: ' + str(event_pk))
+    # Loop through each endpoints
     for ii in format_dict['endpoint_list']:
-
         print(format_dict['endpoint_list'][ii]['endpoint'])
         df_temp, metadata = process_sample_data(event_pk, format_dict['endpoint_list'][ii],
-                                                format_dict['index_variable_list'],
-                                                format_dict['meta_variable_list'],
-                                                format_dict['ignored_variable_list'],
-                                                format_dict['time_variable_list'],
-                                                format_dict['string_columns_regexp'])
+                                                format_dict['index_variable_list'])
 
         if df_temp is not None:
             if 'df_joined' not in locals():
                 df_joined = df_temp
                 metadata_joined = metadata
                 df_joined_asof = df_temp
-
             else:
-                # Allow a tolerance between the collected times.
-                # df_joined_asof = pd.merge_asof(df_joined_asof.reset_index(), df_temp.reset_index(),
-                #                              by='line_out_depth',
-                #                              on='collected',
-                #                              tolerance=pd.Timedelta('1hour'),
-                #                              allow_exact_matches=True)
+                # Merge the different endpoints and allow a tolerance between the collected times.
+                df_joined = pd.merge_asof(df_joined_asof.reset_index().sort_values('collected'),
+                                               df_temp.reset_index().sort_values('collected'),
+                                               by=format_dict['index_variable_list'],
+                                               on='collected',
+                                               tolerance=pd.Timedelta('1hour'),
+                                               allow_exact_matches=True)\
+                    .set_index(format_dict['index_variable_list'])
+                metadata_joined = metadata_joined.merge(metadata, left_index=True, right_index=True, how='outer')
 
                 # df_joined_asof = df_joined_asof.drop(['level_0', 'index'], axis=1)
                 # FIXME asof seems to be working we need to ignore the indexes as long df_joined is always the same
                 #  event pk we should be good. However those indexes columns should be merged again after.
 
                 # Join new sample type to other samples for the same event_pk and sampling time
-                df_joined = df_joined.merge(df_temp, left_index=True, right_index=True, how='outer')
-                metadata_joined = metadata_joined.merge(metadata, left_index=True, right_index=True, how='outer')
+                # df_joined = df_joined.merge(df_temp, left_index=True, right_index=True, how='outer')
+                # metadata_joined = metadata_joined.merge(metadata, left_index=True, right_index=True, how='outer')
                 # TODO some collection time aren't always the exact number we could use pd.merge_asof and a time
                 #  tolerance to do that match
 
