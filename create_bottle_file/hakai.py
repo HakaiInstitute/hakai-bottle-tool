@@ -199,10 +199,9 @@ def get_matching_ctd_data(df_bottles,
                           bin_size=1,
                           hakai_ctd_endpoint='ctd/views/file/cast/data'
                           ):
-
     """
-    Matching Algotrithm use to match CTD Profile to bottle data. The algorithm always match data for the same
-    station id on both side (Bottle and CTD). Then then matching will be done by in the following orther:
+    Matching Algorithm use to match CTD Profile to bottle data. The algorithm always match data for the same
+    station id on both side (Bottle and CTD). Then then matching will be done by in the following other:
         1. Bottle data will be matched to the Closest CTD profile in time (before or after) and matched to an exact
         CTD profile depth bin if available.
         If no exact depth bin is available. This bottle will be ignored from this step.
@@ -212,6 +211,7 @@ def get_matching_ctd_data(df_bottles,
         the considered time range as long as the difference in depth between the two remains within the tolerance.
         4. Bottle data will be not matched to any CTD data.
     """
+
     def _within_depth_tolerance(df, bottle_depth, ctd_depth, depth_tolerance_range, depth_tolerance_ratio):
         dD = (df[ctd_depth] - df[bottle_depth]).abs()
         return (dD < depth_tolerance_range) | ((dD.div(df[bottle_depth]) - 1).abs() < depth_tolerance_ratio)
