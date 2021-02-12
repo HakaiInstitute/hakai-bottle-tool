@@ -56,7 +56,7 @@ def get_hakai_data(endpoint_url, filter_url):
 
 def generate_depth_matching_variable(df):
     # Find median values for pressure transducer
-    df['sample_matching_depth'] = df.filter(like='pressure_transducer_depth').median(axis=1)
+    df['sample_matching_depth'] = df.filter(regex='pressure_transducer_depth$').median(axis=1)
 
     # Fill values with second column
     df.loc[df['sample_matching_depth'].isnull(), 'sample_matching_depth'] = df.loc[
