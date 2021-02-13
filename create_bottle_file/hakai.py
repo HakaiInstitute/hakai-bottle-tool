@@ -1,6 +1,7 @@
 import datetime as dt
 import json
 import re
+import os.path
 
 import numpy as np
 import pandas as pd
@@ -318,6 +319,7 @@ def create_bottle_netcdf(event_pk, format_dict,
                          bottle_time='collected',
                          bottle_depth='sample_matching_depth',
                          time_range=dt.timedelta(days=1),
+                         path_out='',
                          hakai_ctd_endpoint='ctd/views/file/cast/data'
                          ):
     print('Collect Sample data for event pk: [' + str(event_pk) + ']')
@@ -384,7 +386,7 @@ def create_bottle_netcdf(event_pk, format_dict,
             metadata_for_xarray = metadata.merge(ctd_metadata, left_index=True, right_index=True, how='outer')
 
             # Create netcdf by converting the pandas DataFrame to an xarray
-            netcdf_file_name_out = df_event['bottle_profile_id'].unique()[0] + '.nc'
+            netcdf_file_name_out = os.path.join(path_out, df_event['bottle_profile_id'].unique()[0] + '.nc')
             ds = erddap_output.convert_bottle_data_to_xarray(df_matched.sort_index(), netcdf_file_name_out,
                                                              metadata_for_xarray, format_dict)
 
@@ -411,11 +413,11 @@ def get_event_pks_for_a_site(endpoint_list, station_name, start_time=None, end_t
     return df_joined
 
 
-def get_site_netcdf_files(station_name, format_dict, start_time=None, end_time=None):
+def get_site_netcdf_files(station_name, format_dict, start_time=None, end_time=None, path_out=''):
     print('Get Site Specific related Event Pks')
     pk_list = get_event_pks_for_a_site(format_dict['endpoint_list'], station_name,
                                        start_time=start_time, end_time=end_time)
-    create_bottle_netcdf(pk_list['event_pk'].unique().tolist(), format_dict)
+    create_bottle_netcdf(pk_list['event_pk'].unique().tolist(), format_dict, path_out=path_out)
 
 
 def get_hakai_variable_order(format_dict):
