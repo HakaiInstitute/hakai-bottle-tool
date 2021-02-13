@@ -38,18 +38,18 @@ def get_hakai_data(endpoint_url, filter_url):
         # Integer
         int_variables = meta.loc[:, meta.loc['udt_name', :].isin(['int4', 'int8', 'int16'])].columns.tolist()
         if any(int_variables):
-            df[int_variables].astype('int')
+            df[int_variables] = df[int_variables].astype('int')
 
         # Float
         float_variables = meta.loc[:, meta.loc['udt_name', :].isin(['float4', 'float8', 'float16',
                                                                     'float32', 'numeric'])].columns.tolist()
         if any(float_variables):
-            df[float_variables].astype('float')
+            df[float_variables] = df[float_variables].astype('float')
 
         # Bool
         bool_variables = meta.loc[:, meta.loc['udt_name', :].isin(['bool'])].columns.tolist()
         if any(bool_variables):
-            df[bool_variables].astype('bool')
+            df[bool_variables] = df[bool_variables].astype('bool')
 
         # Text data is kept has object for now
     return df, url, meta
