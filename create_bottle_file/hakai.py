@@ -121,15 +121,15 @@ def combine_data_from_hakai_endpoints(event_pk,
             if 'df_joined' not in locals():
                 df_joined = df_temp
                 metadata_joined = metadata
-                df_joined_asof = df_temp
+
             else:
                 # Merge the different endpoints and allow a tolerance between the collected times.
-                df_joined = pd.merge_asof(df_joined_asof.reset_index().sort_values('collected'),
-                                               df_temp.reset_index().sort_values('collected'),
-                                               by=format_dict['index_variable_list'],
-                                               on='collected',
-                                               tolerance=pd.Timedelta('1hour'),
-                                               allow_exact_matches=True)\
+                df_joined = pd.merge_asof(df_joined.reset_index().sort_values('collected'),
+                                          df_temp.reset_index().sort_values('collected'),
+                                          by=format_dict['index_variable_list'],
+                                          on='collected',
+                                          tolerance=pd.Timedelta('5minutes'),
+                                          allow_exact_matches=True) \
                     .set_index(format_dict['index_variable_list'])
                 metadata_joined = metadata_joined.merge(metadata, left_index=True, right_index=True, how='outer')
 
