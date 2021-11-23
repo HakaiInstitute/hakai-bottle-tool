@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="hakai-bottle-tool",
+    name="hakai_bottle_tool",
     version="1.0",
     packages=find_packages(),
+    py_modules=["hakai_bottle_tool"],
     url="hakai.org",
     license="",
     author="Jessy Barrette",

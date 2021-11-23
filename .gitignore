@@ -1,8 +1,6 @@
 
 *.nc
-
 .idea/
-
 .vscode/launch.json
-
 venv/
+hakai_bottle_tool.egg-info/
