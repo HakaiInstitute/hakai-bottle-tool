@@ -1,0 +1,8 @@
+
+*.nc
+
+.idea/
+
+.vscode/launch.json
+
+venv/

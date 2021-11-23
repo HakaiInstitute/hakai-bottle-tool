@@ -15,7 +15,6 @@ def get_hakai_bottle_processing_list(process_list={}):
         5: {'endpoint': 'eims/views/output/poms', 'pivot_variable': 'acidified'},
         6: {'endpoint': 'eims/views/output/ysi'},
         7: {'endpoint': 'eims/views/output/chlorophyll', 'pivot_variable': 'filter_type'},
-        8: {'endpoint': 'eims/views/output/doc'}
     }
 
     # List of variables to use as index for matching of the different sample data sets
@@ -86,12 +85,34 @@ event_pk = 30471
 event_pk = 65094
 event_pk = 185115
 event_pk = 296416
-event_pk= 348755
+event_pk = 348755
 event_pk = 343710
 event_pk = 68551
+event_pk = 363208
+# event_pk = 1733
 
+event_pk = 137035
+event_pk = 3983709
+event_pk = 4600473
+event_pk = [3403465]
+event_pk = [179830]
+path_out = r'E:\temp\bottle'
 # hakai.create_bottle_netcdf(event_pk, get_hakai_bottle_processing_list())
-hakai.get_site_netcdf_files(site_name, get_hakai_bottle_processing_list())
+# hakai.get_site_netcdf_files(site_name, get_hakai_bottle_processing_list())
+# hakai.get_site_netcdf_files('QU5', get_hakai_bottle_processing_list(), path_out=path_out)
+hakai.get_site_netcdf_files('QU39', get_hakai_bottle_processing_list(), path_out=path_out)
+#hakai.get_site_netcdf_files('DFO2', get_hakai_bottle_processing_list(), path_out=path_out)
+#hakai.get_site_netcdf_files('FZH01', get_hakai_bottle_processing_list(), path_out=path_out)
+# hakai.get_site_netcdf_files('KC10', get_hakai_bottle_processing_list(), path_out=path_out)
+# hakai.get_site_netcdf_files('QU43', get_hakai_bottle_processing_list(), path_out=path_out)
+# hakai.get_site_netcdf_files('QCS01', get_hakai_bottle_processing_list(), path_out=path_out)
+# hakai.get_site_netcdf_files('ROCKY06', get_hakai_bottle_processing_list(), path_out=path_out)
 # local_file_list = glob.glob('*.nc')
 # variable_order = hakai.get_hakai_variable_order(get_hakai_bottle_processing_list())
 # erddap_output.create_combined_variable_empty_netcdf(local_file_list, variable_order)
+
+# erddap_output.compare_netcdf(local_file_list, 'METADATA_NETCDF_FOR_DATASETS.nc')
+
+hakai.get_site_netcdf_files('ROCKY04', get_hakai_bottle_processing_list())
+
+# hakai.get_site_netcdf_files('QU39', get_hakai_bottle_processing_list(), start_time='2020-01-01')
