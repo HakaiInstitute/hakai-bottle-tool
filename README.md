@@ -43,8 +43,8 @@ Once all the sample data available. The corresponding CTD profile data collected
 4. Unmatched bottle data left remained unmatched to any CTD data.
 
 A sample is considered within the depth tolerance if the following condition is respected:
-<p align="center" bgcolor=”#800000">
-<img src="https://latex.codecogs.com/svg.image?|D_{ctd}-D_{bottle}|&space;<&space;3m&space;\;&space;or&space;\;&space;|\frac{D_{ctd}}{D_{bottle}}-1|<&space;15%" title="|D_{ctd}-D_{bottle}| < 3m \; or \; |\frac{D_{ctd}}{D_{bottle}}-1|< 15%" />
+<p align="center">
+<img src="https://latex.codecogs.com/svg.image?\bg_white&space;|D_{ctd}-D_{bottle}|&space;<&space;3m&space;\;&space;or&space;\;&space;|\frac{D_{ctd}}{D_{bottle}}-1|<&space;15%" title="|D_{ctd}-D_{bottle}| < 3m \; or \; |\frac{D_{ctd}}{D_{bottle}}-1|< 15%" />
 </p>
 <p align="right"><em>
 where D<sub>ctd</sub> and D<sub>bottle</sub> corresponds respectively to the CTD and bottle measurements associated depths.
