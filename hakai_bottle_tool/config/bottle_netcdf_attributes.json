@@ -1,20 +1,13 @@
 {
   "NC_GLOBAL": {
-    "cdm_data_type": "Profile",
-    "cdm_profile_variables": "bottle_profile_id, organization, work_area, site_id, event_pk",
+    "cdm_profile_variables": "event_pk",
+    "cdm_timeseries_variables": "site_id",
     "Conventions": "COARDS, CF-1.6, ACDD-1.3",
     "creator_name": "Hakai Institute",
     "creator_type": "person",
-    "Easternmost_Easting": "-125.117637517",
-    "featureType": "Profile",
-    "geospatial_lat_max": "51.705000000000005",
-    "geospatial_lat_min": "50.339210371",
+    "cdm_data_type": "TimeseriesProfile",
     "geospatial_lat_units": "degrees_north",
-    "geospatial_lon_max": "-125.117637517",
-    "geospatial_lon_min": "-128.2384",
     "geospatial_lon_units": "degrees_east",
-    "geospatial_vertical_max": "500.0",
-    "geospatial_vertical_min": "0.0",
     "geospatial_vertical_positive": "down",
     "geospatial_vertical_units": "m",
     "infoUrl": "Hakai.org",
@@ -28,8 +21,6 @@
     "standard_name_vocabulary": "CF Standard Name Table v55",
     "subsetVariables": "organization, work_area, site_id, event_pk, time, bottle_profile_id",
     "summary": "Combined Sample data with Conductivity, Temperature, Depth (CTD) Profile data",
-    "time_coverage_end": "2021-07-05T18:26:00Z",
-    "time_coverage_start": "2013-04-02T21:05:00Z",
     "title": "Hakai Bottle Data Complete Provisional",
     "Westernmost_Easting": "-128.2384"
   },
@@ -41,8 +32,7 @@
   },
   "ctd_bottom_dt": {
     "long_name": "CTD Bottom Dt",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "ctd_c_star_at": {
     "long_name": "CTD C Star At"
@@ -106,8 +96,7 @@
   },
   "ctd_end_dt": {
     "long_name": "CTD End Dt",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "ctd_filename": {
     "long_name": "CTD Filename"
@@ -133,8 +122,7 @@
   },
   "ctd_measurement_dt": {
     "long_name": "CTD Measurement Dt",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "ctd_par": {
     "long_name": "CTD Par"
@@ -176,8 +164,7 @@
   },
   "ctd_start_dt": {
     "long_name": "CTD Start Dt",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "ctd_station": {
     "long_name": "CTD Station"
@@ -222,8 +209,7 @@
   },
   "chlorophyll_analyzed_20um": {
     "long_name": "Chlorophyll 20um Analyzed",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_analyzing_lab_20um": {
     "long_name": "Chlorophyll 20um Analyzing Lab"
@@ -234,8 +220,7 @@
   },
   "chlorophyll_calibration_20um": {
     "long_name": "Chlorophyll 20um Calibration",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_calibration_slope_20um": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
@@ -254,8 +239,7 @@
   },
   "chlorophyll_date_20um": {
     "long_name": "Chlorophyll 20um Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_flurometer_serial_no_20um": {
     "long_name": "Chlorophyll 20um Flurometer Serial No"
@@ -279,8 +263,7 @@
   },
   "chlorophyll_preserved_20um": {
     "long_name": "Chlorophyll 20um Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_quality_level_20um": {
     "long_name": "Chlorophyll 20um Quality Level"
@@ -324,8 +307,7 @@
   },
   "chlorophyll_analyzed_3um": {
     "long_name": "Chlorophyll 3um Analyzed",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_analyzing_lab_3um": {
     "long_name": "Chlorophyll 3um Analyzing Lab"
@@ -344,8 +326,7 @@
   },
   "chlorophyll_calibration_3um": {
     "long_name": "Chlorophyll 3um Calibration",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_calibration_slope_3um": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
@@ -380,8 +361,7 @@
   },
   "chlorophyll_date_3um": {
     "long_name": "Chlorophyll 3um Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_flurometer_serial_no_3um": {
     "long_name": "Chlorophyll 3um Flurometer Serial No"
@@ -421,8 +401,7 @@
   },
   "chlorophyll_preserved_3um": {
     "long_name": "Chlorophyll 3um Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_project_specific_id_3um": {
     "long_name": "Chlorophyll 3um Project Specific Id"
@@ -469,8 +448,7 @@
   },
   "chlorophyll_analyzed_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Analyzed",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_analyzing_lab_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Analyzing Lab"
@@ -489,8 +467,7 @@
   },
   "chlorophyll_calibration_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Calibration",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_calibration_slope_Bulk_GF_F": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
@@ -525,8 +502,7 @@
   },
   "chlorophyll_date_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_flurometer_serial_no_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Flurometer Serial No"
@@ -566,8 +542,7 @@
   },
   "chlorophyll_preserved_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_quality_level_Bulk_GF_F": {
     "long_name": "Chlorophyll Bulk GF F Quality Level"
@@ -611,8 +586,7 @@
   },
   "chlorophyll_GF_F_analyzed_GF_F": {
     "long_name": "Chlorophyll GF F Analyzed",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_GF_F_analyzed_GF_F_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
@@ -639,8 +613,7 @@
   },
   "chlorophyll_GF_F_calibration_GF_F": {
     "long_name": "Chlorophyll GF F Calibration",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_GF_F_calibration_slope_GF_F": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
@@ -667,8 +640,7 @@
   },
   "chlorophyll_GF_F_date_GF_F": {
     "long_name": "Chlorophyll GF F Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "chlorophyll_GF_F_flurometer_serial_no_GF_F": {
     "long_name": "Chlorophyll GF F Flurometer Serial No"
@@ -699,9 +671,7 @@
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
   "chlorophyll_GF_F_preserved_GF_F": {
-    "long_name": "Chlorophyll GF F Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "long_name": "Chlorophyll GF F Preserved"
   },
   "chlorophyll_GF_F_quality_level_GF_F": {
     "long_name": "Chlorophyll GF F Quality Level"
@@ -718,8 +688,7 @@
   },
   "collected": {
     "long_name": "Collected",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "ctd_cast_pk": {
     "long_name": "Ctd Cast Pk"
@@ -782,8 +751,7 @@
   },
   "hplc_analyzed": {
     "long_name": "Hplc Analyzed",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "hplc_analyzing_lab": {
     "long_name": "Hplc Analyzing Lab"
@@ -883,8 +851,7 @@
   },
   "hplc_date": {
     "long_name": "Hplc Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "hplc_diadinoxanthin": {
     "long_name": "Hplc Diadinoxanthin"
@@ -1006,8 +973,7 @@
   },
   "hplc_preserved": {
     "long_name": "Hplc Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "hplc_quality_level": {
     "long_name": "Hplc Quality Level"
@@ -1075,13 +1041,11 @@
   },
   "matching_time": {
     "long_name": "Matching Time",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_Cell_Count_date_Cell_Count": {
     "long_name": "Microbial Cell Count Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_Cell_Count_hakai_id_Cell_Count": {
     "long_name": "Microbial Cell Count Hakai Id"
@@ -1091,8 +1055,7 @@
   },
   "microbial_Cell_Count_preserved_Cell_Count": {
     "long_name": "Microbial Cell Count Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_Cell_Count_quality_level_Cell_Count": {
     "long_name": "Microbial Cell Count Quality Level"
@@ -1117,13 +1080,11 @@
   },
   "microbial_prefilter_date_DNA": {
     "long_name": "Microbial DNA Protein Prefilter Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_prefilter_dna_extraction_date_DNA": {
     "long_name": "Microbial DNA Protein Prefilter Dna Extraction Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_prefilter_dna_volume_DNA": {
     "long_name": "Microbial DNA Protein Prefilter Dna Volume"
@@ -1145,8 +1106,7 @@
   },
   "microbial_prefilter_preserved_DNA": {
     "long_name": "Microbial DNA Protein Prefilter Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_prefilter_quality_level_DNA": {
     "long_name": "Microbial DNA Protein Prefilter Quality Level"
@@ -1171,13 +1131,11 @@
   },
   "microbial_date_DNA": {
     "long_name": "Microbial DNA Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_dna_extraction_date_DNA": {
     "long_name": "Microbial DNA Dna Extraction Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_dna_extraction_date_DNA_nReplicates": {
     "long_name": "Microbial DNA Dna Extraction Date N Replicates"
@@ -1217,8 +1175,7 @@
   },
   "microbial_preserved_DNA": {
     "long_name": "Microbial DNA Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_quality_level_DNA": {
     "long_name": "Microbial DNA Quality Level"
@@ -1261,8 +1218,7 @@
   },
   "microbial_date_Protein": {
     "long_name": "Microbial Protein Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_hakai_id_Protein": {
     "long_name": "Microbial Protein Hakai Id"
@@ -1272,8 +1228,7 @@
   },
   "microbial_preserved_Protein": {
     "long_name": "Microbial Protein Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_quality_level_Protein": {
     "long_name": "Microbial Protein Quality Level"
@@ -1292,8 +1247,7 @@
   },
   "microbial_date_RNA": {
     "long_name": "Microbial RNA Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_hakai_id_RNA": {
     "long_name": "Microbial RNA Hakai Id"
@@ -1303,8 +1257,7 @@
   },
   "microbial_prefilter_date_RNA": {
     "long_name": "Microbial RNA Prefilter Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_prefilter_hakai_id_RNA": {
     "long_name": "Microbial RNA Prefilter Hakai Id"
@@ -1314,8 +1267,7 @@
   },
   "microbial_prefilter_preserved_RNA": {
     "long_name": "Microbial RNA Prefilter Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_prefilter_quality_level_RNA": {
     "long_name": "Microbial RNA Prefilter Quality Level"
@@ -1334,8 +1286,7 @@
   },
   "microbial_preserved_RNA": {
     "long_name": "Microbial RNA Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "microbial_quality_level_RNA": {
     "long_name": "Microbial RNA Quality Level"
@@ -1360,8 +1311,7 @@
   },
   "nutrients_analyzed": {
     "long_name": "Nutrients Analyzed",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "nutrients_analyzed_nReplicates": {
     "long_name": "Nutrients Analyzed N Replicates"
@@ -1375,8 +1325,7 @@
   },
   "nutrients_date": {
     "long_name": "Nutrients Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "nutrients_filter_type": {
     "long_name": "Nutrients Filter Type"
@@ -1426,8 +1375,7 @@
   },
   "nutrients_preserved": {
     "long_name": "Nutrients Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "nutrients_project_specific_id": {
     "long_name": "Nutrients Project Specific Id"
@@ -1493,8 +1441,7 @@
   },
   "poms_date_Acidified": {
     "long_name": "Poms Acidified Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "poms_filter_portion_Acidified": {
     "long_name": "Poms Acidified Filter Portion"
@@ -1522,8 +1469,7 @@
   },
   "poms_preserved_Acidified": {
     "long_name": "Poms Acidified Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "poms_quality_level_Acidified": {
     "long_name": "Poms Acidified Quality Level"
@@ -1569,8 +1515,7 @@
   },
   "poms_date": {
     "long_name": "Poms  Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "poms_filter_portion": {
     "long_name": "Poms  Filter Portion"
@@ -1613,8 +1558,7 @@
   },
   "poms_date_nonAcidified": {
     "long_name": "Poms Non Acidified Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "poms_filter_portion_nonAcidified": {
     "long_name": "Poms Non Acidified Filter Portion"
@@ -1642,8 +1586,7 @@
   },
   "poms_preserved_nonAcidified": {
     "long_name": "Poms Non Acidified Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "poms_quality_level_nonAcidified": {
     "long_name": "Poms Non Acidified Quality Level"
@@ -1683,8 +1626,7 @@
   },
   "poms_preserved": {
     "long_name": "Poms  Preserved",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "poms_quality_level": {
     "long_name": "Poms  Quality Level"
@@ -1711,20 +1653,19 @@
     "long_name": "Sample Matching Depth"
   },
   "site_id": {
-    "long_name": "Site Id"
+    "long_name": "Site Id",
+    "cf_role": "timeseries_id"
   },
   "time": {
     "long_name": "Time",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "work_area": {
     "long_name": "Work Area"
   },
   "ysi_date": {
     "long_name": "Ysi Date",
-    "standard_name": "time",
-    "units": "seconds since 1970-01-01T00:00:00Z"
+    "standard_name": "time"
   },
   "ysi_hakai_id": {
     "long_name": "Ysi Hakai Id"
