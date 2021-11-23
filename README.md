@@ -1,18 +1,23 @@
 # Hakai Bottle Tools
-The hakai bottle retrieve sample data collected by the Hakai Institute and available from the following endpoints:
+The hakai bottle tool join together sample and ctd profile data collected by the Hakai Institute and available from the following endpoints within the [Hakai API](https://github.com/HakaiInstitute/hakai-api):
 
 ```python 
-    "eims/views/output/nutrients"
-    "eims/views/output/microbial"
-    "eims/views/output/hplc"
-    "eims/views/output/o18"
-    "eims/views/output/poms"
-    "eims/views/output/ysi"
-    "eims/views/output/chlorophyll"
+{
+    "eims/views/output/nutrients",
+    "eims/views/output/microbial",
+    "eims/views/output/hplc",
+    "eims/views/output/o18",
+    "eims/views/output/poms",
+    "eims/views/output/ysi",
+    "eims/views/output/chlorophyll",
     "eims/views/output/doc"
+}
 ```
 
-And the ctd data from the endpoint: `ctd/views/file/cast/data`
+The ctd data is retrieved from the API endpoint: 
+```python
+"ctd/views/file/cast/data"
+```
 
 # How to
 You can install the package locally by running for the following command:
@@ -31,7 +36,10 @@ Once all the sample data available. The corresponding CTD profile data collected
 3. Unmatched bottles are then matched to **any CTD collected at taht station within the last day and at the nearest depth** within the tolerance
 4. Unmatched bottle data left remained unmatched to any CTD data.
 
-A sample is considered within the depth tolerance if:
+A sample is considered within the depth tolerance if the following condition is respected:
 <p align="center">
 <img src="https://latex.codecogs.com/svg.image?|D_{ctd}-D_{bottle}|&space;<&space;3m&space;\;&space;or&space;\;&space;|\frac{D_{ctd}}{D_{bottle}}-1|<&space;15%" title="|D_{ctd}-D_{bottle}| < 3m \; or \; |\frac{D_{ctd}}{D_{bottle}}-1|< 15%" />
 </p>
+<p align="right"><em>
+where D<sub>ctd</sub> and D<sub>bottle</sub> corresponds respectively to the CTD and bottle measurements associated depths.
+</em></p>

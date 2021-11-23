@@ -260,7 +260,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     n_bottles = len(df_bottle)
 
     # Find closest profile with the exact same depth
-    print("Match bottle to exact ctd pressure bin: ", end="")
+    print("Match {n_bottles} bottles to exact CTD data: ")
     df_bottles_closest_time_depth = pd.merge_asof(
         df_bottle.sort_values("matching_time"),
         df_ctd.sort_values(["matching_time"]),
@@ -281,7 +281,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         df_bottle.columns
     ]
     df_bottles_matched = df_bottles_closest_time_depth[in_tolerance]
-    print(f"{len(df_bottles_matched)}/{n_bottles} matched to exact ctd pressure bin")
+    print(f"{len(df_bottles_matched)} were matched to exact ctd pressure bin.")
     n_bottles -= len(df_bottles_matched)
 
     # First try to retrieve to the closest profile in time and then closest depth
@@ -318,9 +318,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         df_bottles_matched = pd.concat(
             [df_bottles_matched, df_bottles_time[in_tolerance]]
         )
-    print(
-        f"{len(df_bottles_time[in_tolerance])} of the {n_bottles} left were matched to nearest ctd profile"
-    )
+    print(f"{len(df_bottles_time[in_tolerance])} were matched to nearest ctd profile.")
     n_bottles = n_bottles - len(df_bottles_matched)
 
     # Then try to match whatever closest depth sample depth within the allowed time range
@@ -369,7 +367,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
             df_not_matched = df_bottles_depth[in_tolerance == False][df_bottle.columns]
             print(
-                f"{len(df_bottles_depth[in_tolerance])} of the left over profiles were matched to a ctd profile within a {dt} time period before or after"
+                f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth ctd profile collected within ±{dt} period of the sample collection time."
             )
             n_bottles -= len(df_bottles_matched)
         else:
@@ -382,9 +380,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
             .drop_duplicates()
             .tolist()
         )
-        print(
-            f"{len(df_not_matched)} bottles collected at {len(no_matched_collected_times)} collection times failed to be matched to any profiles."
-        )
+        print(f"{len(df_not_matched)} failed to be matched to any profiles.")
         print(f"Failed Collection Time list: {no_matched_collected_times}")
 
     # Finally, keep unmatched bottle data with no possible match
@@ -481,11 +477,11 @@ def filter_bottle_variables(df, filter_variables):
     # Filter columns
     if filter_variables == "Reduced":
         variable_list = read_variable_list_file(
-            os.path.join(module_path, "Reduced_variable_list.csv")
+            os.path.join(module_path, "config", "Reduced_variable_list.csv")
         )
     elif filter_variables == "Complete":
         variable_list = read_variable_list_file(
-            os.path.join(module_path, "Complete_variable_list.csv")
+            os.path.join(module_path, "config", "Complete_variable_list.csv")
         )
     else:
         raise RuntimeError(
@@ -518,7 +514,7 @@ def save_bottle_to(df, station, output_path=None, output_format="netcdf"):
                 df[var] = df[var].dt.tz_convert("UTC").dt.tz_localize(None)
 
         ds = df.to_xarray()
-        with open(os.path.join(module_path, "bottle_netcdf_attributes.json"), "r") as f:
+        with open(os.path.join(module_path, "config","bottle_netcdf_attributes.json"), "r") as f:
             attributes = json.loads(f.read())
 
         # Add Global Attributes
