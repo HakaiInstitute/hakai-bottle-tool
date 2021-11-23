@@ -233,7 +233,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         )
 
     # Get CTD Data
-    print("Retrieve CTD data")
+    print("Download CTD data")
     filter_url = f"limit=-1&pressure!=null&station={station}"
     if time_min:
         filter_url += f"&measurement_dt>{time_min}"
@@ -260,7 +260,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     n_bottles = len(df_bottle)
 
     # Find closest profile with the exact same depth
-    print("Match {n_bottles} bottles to exact CTD data: ")
+    print(f"Match {n_bottles} bottles to CTD Profile data: ")
     df_bottles_closest_time_depth = pd.merge_asof(
         df_bottle.sort_values("matching_time"),
         df_ctd.sort_values(["matching_time"]),
@@ -342,8 +342,6 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
                 continue
 
             # Match the bottles drop to the closest data within this time range
-            if len(drop) > 1:
-                print("asda")
             df_bottles_depth = df_bottles_depth.append(
                 pd.merge_asof(
                     drop,
@@ -514,7 +512,9 @@ def save_bottle_to(df, station, output_path=None, output_format="netcdf"):
                 df[var] = df[var].dt.tz_convert("UTC").dt.tz_localize(None)
 
         ds = df.to_xarray()
-        with open(os.path.join(module_path, "config","bottle_netcdf_attributes.json"), "r") as f:
+        with open(
+            os.path.join(module_path, "config", "bottle_netcdf_attributes.json"), "r"
+        ) as f:
             attributes = json.loads(f.read())
 
         # Add Global Attributes
