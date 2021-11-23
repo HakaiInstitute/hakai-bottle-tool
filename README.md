@@ -19,19 +19,19 @@ The ctd data is retrieved from the API endpoint:
 "ctd/views/file/cast/data"
 ```
 
-# Instalation
+## Instalation
 You can install the package locally by running for the following command:
 ```
 pip install git+https://github.com/HakaiInstitute/hakai-bottle-tool.git
 ```
 You however don't need to install necessarily the package and just use the following jupyter notebook on google colab [here](https://colab.research.google.com/github/HakaiInstitute/hakai-bottle-tool/blob/master/run_hakai_bottle_tool.ipynb).
 
-# How To
+## How To
 The hakai-bottle-tool can either be run on the [google colab jupyter notebooke](https://colab.research.google.com/github/HakaiInstitute/hakai-bottle-tool/blob/master/run_hakai_bottle_tool.ipynb) or, if installed locally, by running the following command:
 ```console
 > python hakai_bottle_tool -station QU39 -time_min 2020-01-01 -time_max 2021-01-01
 ```
-# Method
+## Method
 Each sample type is first groupby  `site_id`, `event_pk`, `line_out_depth` and `collected` time (± 5 minutes) and aggregated by mean (numerical), comma seperated joined strings for strings, count(see _nReplicates), and difference between min and max for numerical values.
 
 All sample type then is joined together by matching `site_id`, `event_pk`, `line_out_depth` and `collected` time (± 5 minutes).
@@ -43,7 +43,7 @@ Once all the sample data available. The corresponding CTD profile data collected
 4. Unmatched bottle data left remained unmatched to any CTD data.
 
 A sample is considered within the depth tolerance if the following condition is respected:
-<p align="center">
+<p align="center" bgcolor=”#800000">
 <img src="https://latex.codecogs.com/svg.image?|D_{ctd}-D_{bottle}|&space;<&space;3m&space;\;&space;or&space;\;&space;|\frac{D_{ctd}}{D_{bottle}}-1|<&space;15%" title="|D_{ctd}-D_{bottle}| < 3m \; or \; |\frac{D_{ctd}}{D_{bottle}}-1|< 15%" />
 </p>
 <p align="right"><em>
