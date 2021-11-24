@@ -188,501 +188,502 @@
   "bottle_profile_id": {
     "long_name": "Bottle Profile Id"
   },
-  "chlorophyll_acetone_volume_ml_20um": {
+  "chlorophyll_20um_acetone_volume_ml": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acid_coefficient_20um": {
+  "chlorophyll_20um_acid_coefficient": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acid_flag_20um": {
+  "chlorophyll_20um_acid_flag": {
     "long_name": "Chlorophyll 20um Acid Flag"
   },
-  "chlorophyll_acid_ratio_correction_factor_20um": {
+  "chlorophyll_20um_acid_ratio_correction_factor": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_20um": {
+  "chlorophyll_20um_after_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_analyzed_20um": {
+  "chlorophyll_20um_analyzed": {
     "long_name": "Chlorophyll 20um Analyzed",
     "standard_name": "time"
   },
-  "chlorophyll_analyzing_lab_20um": {
+  "chlorophyll_20um_analyzing_lab": {
     "long_name": "Chlorophyll 20um Analyzing Lab"
   },
-  "chlorophyll_before_acid_20um": {
+  "chlorophyll_20um_before_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_calibration_20um": {
+  "chlorophyll_20um_calibration": {
     "long_name": "Chlorophyll 20um Calibration",
     "standard_name": "time"
   },
-  "chlorophyll_calibration_slope_20um": {
+  "chlorophyll_20um_calibration_slope": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_20um": {
+  "chlorophyll_20um_chla": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_20um": {
+  "chlorophyll_20um_chla_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_flag_20um": {
+  "chlorophyll_20um_chla_flag": {
     "long_name": "Chlorophyll 20um Chla Flag"
   },
-  "chlorophyll_date_20um": {
+  "chlorophyll_20um_date": {
     "long_name": "Chlorophyll 20um Date",
     "standard_name": "time"
   },
-  "chlorophyll_flurometer_serial_no_20um": {
+  "chlorophyll_20um_flurometer_serial_no": {
     "long_name": "Chlorophyll 20um Flurometer Serial No"
   },
-  "chlorophyll_hakai_id_20um": {
+  "chlorophyll_20um_hakai_id": {
     "long_name": "Chlorophyll 20um Hakai Id"
   },
-  "chlorophyll_lab_technician_20um": {
+  "chlorophyll_20um_lab_technician": {
     "long_name": "Chlorophyll 20um Lab Technician"
   },
-  "chlorophyll_phaeo_20um": {
+  "chlorophyll_20um_phaeo": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_20um": {
+  "chlorophyll_20um_phaeo_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_flag_20um": {
+  "chlorophyll_20um_phaeo_flag": {
     "long_name": "Chlorophyll 20um Phaeo Flag"
   },
-  "chlorophyll_preserved_20um": {
+  "chlorophyll_20um_preserved": {
     "long_name": "Chlorophyll 20um Preserved",
     "standard_name": "time"
   },
-  "chlorophyll_quality_level_20um": {
+  "chlorophyll_20um_quality_level": {
     "long_name": "Chlorophyll 20um Quality Level"
   },
-  "chlorophyll_quality_log_20um": {
+  "chlorophyll_20um_quality_log": {
     "long_name": "Chlorophyll 20um Quality Log"
   },
-  "chlorophyll_row_flag_20um": {
+  "chlorophyll_20um_row_flag": {
     "long_name": "Chlorophyll 20um Row Flag"
   },
-  "chlorophyll_volume_20um": {
+  "chlorophyll_20um_volume": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acetone_volume_ml_3um": {
+  "chlorophyll_3um_acetone_volume_ml": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acid_coefficient_3um": {
+  "chlorophyll_3um_acid_coefficient": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acid_flag_3um": {
+  "chlorophyll_3um_acid_flag": {
     "long_name": "Chlorophyll 3um Acid Flag"
   },
-  "chlorophyll_acid_ratio_correction_factor_3um": {
+  "chlorophyll_3um_acid_ratio_correction_factor": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_3um": {
+  "chlorophyll_3um_after_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_3um_nReplicates": {
+  "chlorophyll_3um_after_acid_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_3um_range": {
+  "chlorophyll_3um_after_acid_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_analyzed_3um": {
+  "chlorophyll_3um_analyzed": {
     "long_name": "Chlorophyll 3um Analyzed",
     "standard_name": "time"
   },
-  "chlorophyll_analyzing_lab_3um": {
+  "chlorophyll_3um_analyzing_lab": {
     "long_name": "Chlorophyll 3um Analyzing Lab"
   },
-  "chlorophyll_before_acid_3um": {
+  "chlorophyll_3um_before_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_before_acid_3um_nReplicates": {
+  "chlorophyll_3um_before_acid_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_before_acid_3um_range": {
+  "chlorophyll_3um_before_acid_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_calibration_3um": {
+  "chlorophyll_3um_calibration": {
     "long_name": "Chlorophyll 3um Calibration",
     "standard_name": "time"
   },
-  "chlorophyll_calibration_slope_3um": {
+  "chlorophyll_3um_calibration_slope": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_3um": {
+  "chlorophyll_3um_chla": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_3um": {
+  "chlorophyll_3um_chla_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_3um_nReplicates": {
+  "chlorophyll_3um_chla_final_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_3um_range": {
+  "chlorophyll_3um_chla_final_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_flag_3um": {
+  "chlorophyll_3um_chla_flag": {
     "long_name": "Chlorophyll 3um Chla Flag"
   },
-  "chlorophyll_chla_3um_nReplicates": {
+  "chlorophyll_3um_chla_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_3um_range": {
+  "chlorophyll_3um_chla_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_date_3um": {
+  "chlorophyll_3um_date": {
     "long_name": "Chlorophyll 3um Date",
     "standard_name": "time"
   },
-  "chlorophyll_flurometer_serial_no_3um": {
+  "chlorophyll_3um_flurometer_serial_no": {
     "long_name": "Chlorophyll 3um Flurometer Serial No"
   },
-  "chlorophyll_hakai_id_3um": {
+  "chlorophyll_3um_hakai_id": {
     "long_name": "Chlorophyll 3um Hakai Id"
   },
-  "chlorophyll_lab_technician_3um": {
+  "chlorophyll_3um_lab_technician": {
     "long_name": "Chlorophyll 3um Lab Technician"
   },
-  "chlorophyll_phaeo_3um": {
+  "chlorophyll_3um_phaeo": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_3um": {
+  "chlorophyll_3um_phaeo_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_3um_nReplicates": {
+  "chlorophyll_3um_phaeo_final_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_3um_range": {
+  "chlorophyll_3um_phaeo_final_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_flag_3um": {
+  "chlorophyll_3um_phaeo_flag": {
     "long_name": "Chlorophyll 3um Phaeo Flag"
   },
-  "chlorophyll_phaeo_3um_nReplicates": {
+  "chlorophyll_3um_phaeo_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_3um_range": {
+  "chlorophyll_3um_phaeo_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_preserved_3um": {
+  "chlorophyll_3um_preserved": {
     "long_name": "Chlorophyll 3um Preserved",
     "standard_name": "time"
   },
-  "chlorophyll_project_specific_id_3um": {
+  "chlorophyll_3um_project_specific_id": {
     "long_name": "Chlorophyll 3um Project Specific Id"
   },
-  "chlorophyll_quality_level_3um": {
+  "chlorophyll_3um_quality_level": {
     "long_name": "Chlorophyll 3um Quality Level"
   },
-  "chlorophyll_quality_log_3um": {
+  "chlorophyll_3um_quality_log": {
     "long_name": "Chlorophyll 3um Quality Log"
   },
-  "chlorophyll_row_flag_3um": {
+  "chlorophyll_3um_row_flag": {
     "long_name": "Chlorophyll 3um Row Flag"
   },
-  "chlorophyll_volume_3um": {
+  "chlorophyll_3um_volume": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acetone_volume_ml_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_acetone_volume_ml": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acid_coefficient_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_acid_coefficient": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_acid_flag_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_acid_flag": {
     "long_name": "Chlorophyll Bulk GF F Acid Flag"
   },
-  "chlorophyll_acid_ratio_correction_factor_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_acid_ratio_correction_factor": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_after_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_Bulk_GF_F_nReplicates": {
+  "chlorophyll_Bulk_GF_F_after_acid_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_after_acid_Bulk_GF_F_range": {
+  "chlorophyll_Bulk_GF_F_after_acid_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_analyzed_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_analyzed": {
     "long_name": "Chlorophyll Bulk GF F Analyzed",
     "standard_name": "time"
   },
-  "chlorophyll_analyzing_lab_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_analyzing_lab": {
     "long_name": "Chlorophyll Bulk GF F Analyzing Lab"
   },
-  "chlorophyll_before_acid_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_before_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_before_acid_Bulk_GF_F_nReplicates": {
+  "chlorophyll_Bulk_GF_F_before_acid_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_before_acid_Bulk_GF_F_range": {
+  "chlorophyll_Bulk_GF_F_before_acid_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_calibration_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_calibration": {
     "long_name": "Chlorophyll Bulk GF F Calibration",
     "standard_name": "time"
   },
-  "chlorophyll_calibration_slope_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_calibration_slope": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_chla": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_chla_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_Bulk_GF_F_nReplicates": {
+  "chlorophyll_Bulk_GF_F_chla_final_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_final_Bulk_GF_F_range": {
+  "chlorophyll_Bulk_GF_F_chla_final_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_flag_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_chla_flag": {
     "long_name": "Chlorophyll Bulk GF F Chla Flag"
   },
-  "chlorophyll_chla_Bulk_GF_F_nReplicates": {
+  "chlorophyll_Bulk_GF_F_chla_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_chla_Bulk_GF_F_range": {
+  "chlorophyll_Bulk_GF_F_chla_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_date_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_date": {
     "long_name": "Chlorophyll Bulk GF F Date",
     "standard_name": "time"
   },
-  "chlorophyll_flurometer_serial_no_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_flurometer_serial_no": {
     "long_name": "Chlorophyll Bulk GF F Flurometer Serial No"
   },
-  "chlorophyll_hakai_id_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_hakai_id": {
     "long_name": "Chlorophyll Bulk GF F Hakai Id"
   },
-  "chlorophyll_lab_technician_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_lab_technician": {
     "long_name": "Chlorophyll Bulk GF F Lab Technician"
   },
-  "chlorophyll_phaeo_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_phaeo": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_phaeo_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_Bulk_GF_F_nReplicates": {
+  "chlorophyll_Bulk_GF_F_phaeo_final_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_final_Bulk_GF_F_range": {
+  "chlorophyll_Bulk_GF_F_phaeo_final_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_flag_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_phaeo_flag": {
     "long_name": "Chlorophyll Bulk GF F Phaeo Flag"
   },
-  "chlorophyll_phaeo_Bulk_GF_F_nReplicates": {
+  "chlorophyll_Bulk_GF_F_phaeo_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_phaeo_Bulk_GF_F_range": {
+  "chlorophyll_Bulk_GF_F_phaeo_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_preserved_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_preserved": {
     "long_name": "Chlorophyll Bulk GF F Preserved",
     "standard_name": "time"
   },
-  "chlorophyll_quality_level_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_quality_level": {
     "long_name": "Chlorophyll Bulk GF F Quality Level"
   },
-  "chlorophyll_quality_log_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_quality_log": {
     "long_name": "Chlorophyll Bulk GF F Quality Log"
   },
-  "chlorophyll_row_flag_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_row_flag": {
     "long_name": "Chlorophyll Bulk GF F Row Flag"
   },
-  "chlorophyll_volume_Bulk_GF_F": {
+  "chlorophyll_Bulk_GF_F_volume": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_acetone_volume_ml_GF_F": {
+  "chlorophyll_GF_F_acetone_volume_ml": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_acid_coefficient_GF_F": {
+  "chlorophyll_GF_F_acid_coefficient": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_acid_flag_GF_F": {
+  "chlorophyll_GF_F_acid_flag": {
     "long_name": "Chlorophyll GF F Acid Flag"
   },
-  "chlorophyll_GF_F_acid_ratio_correction_factor_GF_F": {
+  "chlorophyll_GF_F_acid_ratio_correction_factor": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_after_acid_GF_F": {
+  "chlorophyll_GF_F_after_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_after_acid_GF_F_nReplicates": {
+  "chlorophyll_GF_F_after_acid_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_after_acid_GF_F_range": {
+  "chlorophyll_GF_F_after_acid_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_analyzed_GF_F": {
+  "chlorophyll_GF_F_analyzed": {
     "long_name": "Chlorophyll GF F Analyzed",
     "standard_name": "time"
   },
-  "chlorophyll_GF_F_analyzed_GF_F_nReplicates": {
+  "chlorophyll_GF_F_analyzed_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_analyzed_GF_F_range": {
+  "chlorophyll_GF_F_analyzed_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_analyzing_lab_GF_F": {
+  "chlorophyll_GF_F_analyzing_lab": {
     "long_name": "Chlorophyll GF F Analyzing Lab"
   },
-  "chlorophyll_GF_F_before_acid_GF_F": {
+  "chlorophyll_GF_F_before_acid": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_before_acid_GF_F_nReplicates": {
+  "chlorophyll_GF_F_before_acid_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_before_acid_GF_F_range": {
+  "chlorophyll_GF_F_before_acid_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_calibration_GF_F": {
+  "chlorophyll_GF_F_calibration": {
     "long_name": "Chlorophyll GF F Calibration",
     "standard_name": "time"
   },
-  "chlorophyll_GF_F_calibration_slope_GF_F": {
+  "chlorophyll_GF_F_calibration_slope": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_chla_GF_F": {
+  "chlorophyll_GF_F_chla": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_chla_final_GF_F": {
+  "chlorophyll_GF_F_chla_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_chla_flag_GF_F": {
+  "chlorophyll_GF_F_chla_flag": {
     "long_name": "Chlorophyll GF F Chla Flag"
   },
-  "chlorophyll_GF_F_chla_GF_F_nReplicates": {
+  "chlorophyll_GF_F_chla_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_chla_GF_F_range": {
+  "chlorophyll_GF_F_chla_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_date_GF_F": {
+  "chlorophyll_GF_F_date": {
     "long_name": "Chlorophyll GF F Date",
     "standard_name": "time"
   },
-  "chlorophyll_GF_F_flurometer_serial_no_GF_F": {
+  "chlorophyll_GF_F_flurometer_serial_no": {
     "long_name": "Chlorophyll GF F Flurometer Serial No"
   },
-  "chlorophyll_GF_F_hakai_id_GF_F": {
+  "chlorophyll_GF_F_hakai_id": {
     "long_name": "Chlorophyll GF F Hakai Id"
   },
-  "chlorophyll_GF_F_lab_technician_GF_F": {
+  "chlorophyll_GF_F_lab_technician": {
     "long_name": "Chlorophyll GF F Lab Technician"
   },
-  "chlorophyll_GF_F_phaeo_GF_F": {
+  "chlorophyll_GF_F_phaeo": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_phaeo_final_GF_F": {
+  "chlorophyll_GF_F_phaeo_final": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_phaeo_flag_GF_F": {
+  "chlorophyll_GF_F_phaeo_flag": {
     "long_name": "Chlorophyll GF F Phaeo Flag"
   },
-  "chlorophyll_GF_F_phaeo_GF_F_nReplicates": {
+  "chlorophyll_GF_F_phaeo_nReplicates": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_phaeo_GF_F_range": {
+  "chlorophyll_GF_F_phaeo_range": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
-  "chlorophyll_GF_F_preserved_GF_F": {
-    "long_name": "Chlorophyll GF F Preserved"
+  "chlorophyll_GF_F_preserved": {
+    "long_name": "Chlorophyll GF F Preserved",
+    "standard_name": "time"
   },
-  "chlorophyll_GF_F_quality_level_GF_F": {
+  "chlorophyll_GF_F_quality_level": {
     "long_name": "Chlorophyll GF F Quality Level"
   },
-  "chlorophyll_GF_F_quality_log_GF_F": {
+  "chlorophyll_GF_F_quality_log": {
     "long_name": "Chlorophyll GF F Quality Log"
   },
-  "chlorophyll_GF_F_row_flag_GF_F": {
+  "chlorophyll_GF_F_row_flag": {
     "long_name": "Chlorophyll GF F Row Flag"
   },
-  "chlorophyll_GF_F_volume_GF_F": {
+  "chlorophyll_GF_F_volume": {
     "long_name": "Concentration Of Chlorophyll In Sea Water",
     "standard_name": "concentration_of_chlorophyll_in_sea_water"
   },
@@ -1043,270 +1044,270 @@
     "long_name": "Matching Time",
     "standard_name": "time"
   },
-  "microbial_Cell_Count_date_Cell_Count": {
+  "microbial_Cell_Count_date": {
     "long_name": "Microbial Cell Count Date",
     "standard_name": "time"
   },
-  "microbial_Cell_Count_hakai_id_Cell_Count": {
+  "microbial_Cell_Count_hakai_id": {
     "long_name": "Microbial Cell Count Hakai Id"
   },
-  "microbial_Cell_Count_lab_technician_Cell_Count": {
+  "microbial_Cell_Count_lab_technician": {
     "long_name": "Microbial Cell Count Lab Technician"
   },
-  "microbial_Cell_Count_preserved_Cell_Count": {
+  "microbial_Cell_Count_preserved": {
     "long_name": "Microbial Cell Count Preserved",
     "standard_name": "time"
   },
-  "microbial_Cell_Count_quality_level_Cell_Count": {
+  "microbial_Cell_Count_quality_level": {
     "long_name": "Microbial Cell Count Quality Level"
   },
-  "microbial_Cell_Count_quality_log_Cell_Count": {
+  "microbial_Cell_Count_quality_log": {
     "long_name": "Microbial Cell Count Quality Log"
   },
-  "microbial_Cell_Count_row_flag_Cell_Count": {
+  "microbial_Cell_Count_row_flag": {
     "long_name": "Microbial Cell Count Row Flag"
   },
-  "microbial_Cell_Count_source_Cell_Count": {
+  "microbial_Cell_Count_source": {
     "long_name": "Microbial Cell Count Source"
   },
-  "microbial_Cell_Count_volume_Cell_Count": {
+  "microbial_Cell_Count_volume": {
     "long_name": "Microbial Cell Count Volume"
   },
-  "microbial_Cell_Count_volume_Cell_Count_nReplicates": {
+  "microbial_Cell_Count_volume_nReplicates": {
     "long_name": "Microbial Cell Count Volume N Replicates"
   },
-  "microbial_Cell_Count_volume_Cell_Count_range": {
+  "microbial_Cell_Count_volume_range": {
     "long_name": "Microbial Cell Count Volume Range"
   },
-  "microbial_prefilter_date_DNA": {
+  "microbial_DNA_Protein_prefilter_date": {
     "long_name": "Microbial DNA Protein Prefilter Date",
     "standard_name": "time"
   },
-  "microbial_prefilter_dna_extraction_date_DNA": {
+  "microbial_DNA_Protein_prefilter_dna_extraction_date": {
     "long_name": "Microbial DNA Protein Prefilter Dna Extraction Date",
     "standard_name": "time"
   },
-  "microbial_prefilter_dna_volume_DNA": {
+  "microbial_DNA_Protein_prefilter_dna_volume": {
     "long_name": "Microbial DNA Protein Prefilter Dna Volume"
   },
-  "microbial_prefilter_dna_volume_te_wash_DNA": {
+  "microbial_DNA_Protein_prefilter_dna_volume_te_wash": {
     "long_name": "Microbial DNA Protein Prefilter Dna Volume Te Wash"
   },
-  "microbial_prefilter_extracting_lab_DNA": {
+  "microbial_DNA_Protein_prefilter_extracting_lab": {
     "long_name": "Microbial DNA Protein Prefilter Extracting Lab"
   },
-  "microbial_prefilter_extracting_staff_DNA": {
+  "microbial_DNA_Protein_prefilter_extracting_staff": {
     "long_name": "Microbial DNA Protein Prefilter Extracting Staff"
   },
-  "microbial_prefilter_hakai_id_DNA": {
+  "microbial_DNA_Protein_prefilter_hakai_id": {
     "long_name": "Microbial DNA Protein Prefilter Hakai Id"
   },
-  "microbial_prefilter_lab_technician_DNA": {
+  "microbial_DNA_Protein_prefilter_lab_technician": {
     "long_name": "Microbial DNA Protein Prefilter Lab Technician"
   },
-  "microbial_prefilter_preserved_DNA": {
+  "microbial_DNA_Protein_prefilter_preserved": {
     "long_name": "Microbial DNA Protein Prefilter Preserved",
     "standard_name": "time"
   },
-  "microbial_prefilter_quality_level_DNA": {
+  "microbial_DNA_Protein_prefilter_quality_level": {
     "long_name": "Microbial DNA Protein Prefilter Quality Level"
   },
-  "microbial_prefilter_quality_log_DNA": {
+  "microbial_DNA_Protein_prefilter_quality_log": {
     "long_name": "Microbial DNA Protein Prefilter Quality Log"
   },
-  "microbial_prefilter_qubit_dna_concentration_DNA": {
+  "microbial_DNA_Protein_prefilter_qubit_dna_concentration": {
     "long_name": "Microbial DNA Protein Prefilter Qubit Dna Concentration"
   },
-  "microbial_prefilter_row_flag_DNA": {
+  "microbial_DNA_Protein_prefilter_row_flag": {
     "long_name": "Microbial DNA Protein Prefilter Row Flag"
   },
-  "microbial_prefilter_source_DNA": {
+  "microbial_DNA_Protein_prefilter_source": {
     "long_name": "Microbial DNA Protein Prefilter Source"
   },
-  "microbial_prefilter_stock_dna_concentration_DNA": {
+  "microbial_DNA_Protein_prefilter_stock_dna_concentration": {
     "long_name": "Microbial DNA Protein Prefilter Stock Dna Concentration"
   },
-  "microbial_prefilter_volume_DNA": {
+  "microbial_DNA_Protein_prefilter_volume": {
     "long_name": "Microbial DNA Protein Prefilter Volume"
   },
-  "microbial_date_DNA": {
+  "microbial_DNA_date": {
     "long_name": "Microbial DNA Date",
     "standard_name": "time"
   },
-  "microbial_dna_extraction_date_DNA": {
+  "microbial_DNA_dna_extraction_date": {
     "long_name": "Microbial DNA Dna Extraction Date",
     "standard_name": "time"
   },
-  "microbial_dna_extraction_date_DNA_nReplicates": {
+  "microbial_DNA_dna_extraction_date_nReplicates": {
     "long_name": "Microbial DNA Dna Extraction Date N Replicates"
   },
-  "microbial_dna_extraction_date_DNA_range": {
+  "microbial_DNA_dna_extraction_date_range": {
     "long_name": "Microbial DNA Dna Extraction Date Range"
   },
-  "microbial_dna_volume_DNA": {
+  "microbial_DNA_dna_volume": {
     "long_name": "Microbial DNA Dna Volume"
   },
-  "microbial_dna_volume_DNA_nReplicates": {
+  "microbial_DNA_dna_volume_nReplicates": {
     "long_name": "Microbial DNA Dna Volume N Replicates"
   },
-  "microbial_dna_volume_DNA_range": {
+  "microbial_DNA_dna_volume_range": {
     "long_name": "Microbial DNA Dna Volume Range"
   },
-  "microbial_dna_volume_te_wash_DNA": {
+  "microbial_DNA_dna_volume_te_wash": {
     "long_name": "Microbial DNA Dna Volume Te Wash"
   },
-  "microbial_dna_volume_te_wash_DNA_nReplicates": {
+  "microbial_DNA_dna_volume_te_wash_nReplicates": {
     "long_name": "Microbial DNA Dna Volume Te Wash N Replicates"
   },
-  "microbial_dna_volume_te_wash_DNA_range": {
+  "microbial_DNA_dna_volume_te_wash_range": {
     "long_name": "Microbial DNA Dna Volume Te Wash Range"
   },
-  "microbial_extracting_lab_DNA": {
+  "microbial_DNA_extracting_lab": {
     "long_name": "Microbial DNA Extracting Lab"
   },
-  "microbial_extracting_staff_DNA": {
+  "microbial_DNA_extracting_staff": {
     "long_name": "Microbial DNA Extracting Staff"
   },
-  "microbial_hakai_id_DNA": {
+  "microbial_DNA_hakai_id": {
     "long_name": "Microbial DNA Hakai Id"
   },
-  "microbial_lab_technician_DNA": {
+  "microbial_DNA_lab_technician": {
     "long_name": "Microbial DNA Lab Technician"
   },
-  "microbial_preserved_DNA": {
+  "microbial_DNA_preserved": {
     "long_name": "Microbial DNA Preserved",
     "standard_name": "time"
   },
-  "microbial_quality_level_DNA": {
+  "microbial_DNA_quality_level": {
     "long_name": "Microbial DNA Quality Level"
   },
-  "microbial_quality_log_DNA": {
+  "microbial_DNA_quality_log": {
     "long_name": "Microbial DNA Quality Log"
   },
-  "microbial_qubit_dna_concentration_DNA": {
+  "microbial_DNA_qubit_dna_concentration": {
     "long_name": "Microbial DNA Qubit Dna Concentration"
   },
-  "microbial_qubit_dna_concentration_DNA_nReplicates": {
+  "microbial_DNA_qubit_dna_concentration_nReplicates": {
     "long_name": "Microbial DNA Qubit Dna Concentration N Replicates"
   },
-  "microbial_qubit_dna_concentration_DNA_range": {
+  "microbial_DNA_qubit_dna_concentration_range": {
     "long_name": "Microbial DNA Qubit Dna Concentration Range"
   },
-  "microbial_row_flag_DNA": {
+  "microbial_DNA_row_flag": {
     "long_name": "Microbial DNA Row Flag"
   },
-  "microbial_source_DNA": {
+  "microbial_DNA_source": {
     "long_name": "Microbial DNA Source"
   },
-  "microbial_stock_dna_concentration_DNA": {
+  "microbial_DNA_stock_dna_concentration": {
     "long_name": "Microbial DNA Stock Dna Concentration"
   },
-  "microbial_stock_dna_concentration_DNA_nReplicates": {
+  "microbial_DNA_stock_dna_concentration_nReplicates": {
     "long_name": "Microbial DNA Stock Dna Concentration N Replicates"
   },
-  "microbial_stock_dna_concentration_DNA_range": {
+  "microbial_DNA_stock_dna_concentration_range": {
     "long_name": "Microbial DNA Stock Dna Concentration Range"
   },
-  "microbial_volume_DNA": {
+  "microbial_DNA_volume": {
     "long_name": "Microbial DNA Volume"
   },
-  "microbial_volume_DNA_nReplicates": {
+  "microbial_DNA_volume_nReplicates": {
     "long_name": "Microbial DNA Volume N Replicates"
   },
-  "microbial_volume_DNA_range": {
+  "microbial_DNA_volume_range": {
     "long_name": "Microbial DNA Volume Range"
   },
-  "microbial_date_Protein": {
+  "microbial_Protein_date": {
     "long_name": "Microbial Protein Date",
     "standard_name": "time"
   },
-  "microbial_hakai_id_Protein": {
+  "microbial_Protein_hakai_id": {
     "long_name": "Microbial Protein Hakai Id"
   },
-  "microbial_lab_technician_Protein": {
+  "microbial_Protein_lab_technician": {
     "long_name": "Microbial Protein Lab Technician"
   },
-  "microbial_preserved_Protein": {
+  "microbial_Protein_preserved": {
     "long_name": "Microbial Protein Preserved",
     "standard_name": "time"
   },
-  "microbial_quality_level_Protein": {
+  "microbial_Protein_quality_level": {
     "long_name": "Microbial Protein Quality Level"
   },
-  "microbial_quality_log_Protein": {
+  "microbial_Protein_quality_log": {
     "long_name": "Microbial Protein Quality Log"
   },
-  "microbial_row_flag_Protein": {
+  "microbial_Protein_row_flag": {
     "long_name": "Microbial Protein Row Flag"
   },
-  "microbial_source_Protein": {
+  "microbial_Protein_source": {
     "long_name": "Microbial Protein Source"
   },
-  "microbial_volume_Protein": {
+  "microbial_Protein_volume": {
     "long_name": "Microbial Protein Volume"
   },
-  "microbial_date_RNA": {
+  "microbial_RNA_date": {
     "long_name": "Microbial RNA Date",
     "standard_name": "time"
   },
-  "microbial_hakai_id_RNA": {
+  "microbial_RNA_hakai_id": {
     "long_name": "Microbial RNA Hakai Id"
   },
-  "microbial_lab_technician_RNA": {
+  "microbial_RNA_lab_technician": {
     "long_name": "Microbial RNA Lab Technician"
   },
-  "microbial_prefilter_date_RNA": {
+  "microbial_RNA_prefilter_date": {
     "long_name": "Microbial RNA Prefilter Date",
     "standard_name": "time"
   },
-  "microbial_prefilter_hakai_id_RNA": {
+  "microbial_RNA_prefilter_hakai_id": {
     "long_name": "Microbial RNA Prefilter Hakai Id"
   },
-  "microbial_prefilter_lab_technician_RNA": {
+  "microbial_RNA_prefilter_lab_technician": {
     "long_name": "Microbial RNA Prefilter Lab Technician"
   },
-  "microbial_prefilter_preserved_RNA": {
+  "microbial_RNA_prefilter_preserved": {
     "long_name": "Microbial RNA Prefilter Preserved",
     "standard_name": "time"
   },
-  "microbial_prefilter_quality_level_RNA": {
+  "microbial_RNA_prefilter_quality_level": {
     "long_name": "Microbial RNA Prefilter Quality Level"
   },
-  "microbial_prefilter_quality_log_RNA": {
+  "microbial_RNA_prefilter_quality_log": {
     "long_name": "Microbial RNA Prefilter Quality Log"
   },
-  "microbial_prefilter_row_flag_RNA": {
+  "microbial_RNA_prefilter_row_flag": {
     "long_name": "Microbial RNA Prefilter Row Flag"
   },
-  "microbial_prefilter_source_RNA": {
+  "microbial_RNA_prefilter_source": {
     "long_name": "Microbial RNA Prefilter Source"
   },
-  "microbial_prefilter_volume_RNA": {
+  "microbial_RNA_prefilter_volume": {
     "long_name": "Microbial RNA Prefilter Volume"
   },
-  "microbial_preserved_RNA": {
+  "microbial_RNA_preserved": {
     "long_name": "Microbial RNA Preserved",
     "standard_name": "time"
   },
-  "microbial_quality_level_RNA": {
+  "microbial_RNA_quality_level": {
     "long_name": "Microbial RNA Quality Level"
   },
-  "microbial_quality_log_RNA": {
+  "microbial_RNA_quality_log": {
     "long_name": "Microbial RNA Quality Log"
   },
-  "microbial_row_flag_RNA": {
+  "microbial_RNA_row_flag": {
     "long_name": "Microbial RNA Row Flag"
   },
-  "microbial_source_RNA": {
+  "microbial_RNA_source": {
     "long_name": "Microbial RNA Source"
   },
-  "microbial_volume_RNA": {
+  "microbial_RNA_volume": {
     "long_name": "Microbial RNA Volume"
   },
-  "microbial_volume_RNA_nReplicates": {
+  "microbial_RNA_volume_nReplicates": {
     "long_name": "Microbial RNA Volume N Replicates"
   },
-  "microbial_volume_RNA_range": {
+  "microbial_RNA_volume_range": {
     "long_name": "Microbial RNA Volume Range"
   },
   "nutrients_analyzed": {
@@ -1412,96 +1413,96 @@
   "organization": {
     "long_name": "Organization"
   },
-  "poms_acidification_method_Acidified": {
+  "poms_Acidified_acidification_method": {
     "long_name": "Poms Acidified Acidification Method"
   },
-  "poms_analyzing_lab_Acidified": {
+  "poms_Acidified_analyzing_lab": {
     "long_name": "Poms Acidified Analyzing Lab"
   },
-  "poms_c_flag_Acidified": {
+  "poms_Acidified_c_flag": {
     "long_name": "Poms Acidified C Flag"
   },
-  "poms_corr_delta13c_Acidified": {
+  "poms_Acidified_corr_delta13c": {
     "long_name": "Poms Acidified Corr Delta13c"
   },
-  "poms_corr_delta13c_Acidified_nReplicates": {
+  "poms_Acidified_corr_delta13c_nReplicates": {
     "long_name": "Poms Acidified Corr Delta13c N Replicates"
   },
-  "poms_corr_delta13c_Acidified_range": {
+  "poms_Acidified_corr_delta13c_range": {
     "long_name": "Poms Acidified Corr Delta13c Range"
   },
-  "poms_corr_delta15n_Acidified": {
+  "poms_Acidified_corr_delta15n": {
     "long_name": "Poms Acidified Corr Delta15n"
   },
-  "poms_corr_delta15n_Acidified_nReplicates": {
+  "poms_Acidified_corr_delta15n_nReplicates": {
     "long_name": "Poms Acidified Corr Delta15n N Replicates"
   },
-  "poms_corr_delta15n_Acidified_range": {
+  "poms_Acidified_corr_delta15n_range": {
     "long_name": "Poms Acidified Corr Delta15n Range"
   },
-  "poms_date_Acidified": {
+  "poms_Acidified_date": {
     "long_name": "Poms Acidified Date",
     "standard_name": "time"
   },
-  "poms_filter_portion_Acidified": {
+  "poms_Acidified_filter_portion": {
     "long_name": "Poms Acidified Filter Portion"
   },
-  "poms_filter_size_mm_Acidified": {
+  "poms_Acidified_filter_size_mm": {
     "long_name": "Poms Acidified Filter Size Mm"
   },
-  "poms_filter_type_Acidified": {
+  "poms_Acidified_filter_type": {
     "long_name": "Poms Acidified Filter Type"
   },
-  "poms_hakai_id_Acidified": {
+  "poms_Acidified_hakai_id": {
     "long_name": "Poms Acidified Hakai Id"
   },
-  "poms_lab_technician_Acidified": {
+  "poms_Acidified_lab_technician": {
     "long_name": "Poms Acidified Lab Technician"
   },
-  "poms_n_flag_Acidified": {
+  "poms_Acidified_n_flag": {
     "long_name": "Poms Acidified N Flag"
   },
-  "poms_post_weight_mg_Acidified": {
+  "poms_Acidified_post_weight_mg": {
     "long_name": "Poms Acidified Post Weight Mg"
   },
-  "poms_pre_weight_mg_Acidified": {
+  "poms_Acidified_pre_weight_mg": {
     "long_name": "Poms Acidified Pre Weight Mg"
   },
-  "poms_preserved_Acidified": {
+  "poms_Acidified_preserved": {
     "long_name": "Poms Acidified Preserved",
     "standard_name": "time"
   },
-  "poms_quality_level_Acidified": {
+  "poms_Acidified_quality_level": {
     "long_name": "Poms Acidified Quality Level"
   },
-  "poms_quality_log_Acidified": {
+  "poms_Acidified_quality_log": {
     "long_name": "Poms Acidified Quality Log"
   },
-  "poms_row_flag_Acidified": {
+  "poms_Acidified_row_flag": {
     "long_name": "Poms Acidified Row Flag"
   },
-  "poms_source_Acidified": {
+  "poms_Acidified_source": {
     "long_name": "Poms Acidified Source"
   },
-  "poms_ug_c_Acidified": {
+  "poms_Acidified_ug_c": {
     "long_name": "Poms Acidified Ug C"
   },
-  "poms_ug_c_Acidified_nReplicates": {
+  "poms_Acidified_ug_c_nReplicates": {
     "long_name": "Poms Acidified Ug C N Replicates"
   },
-  "poms_ug_c_Acidified_range": {
+  "poms_Acidified_ug_c_range": {
     "long_name": "Poms Acidified Ug C Range"
   },
-  "poms_ug_n_Acidified": {
+  "poms_Acidified_ug_n": {
     "long_name": "Poms Acidified Ug N"
   },
-  "poms_ug_n_Acidified_nReplicates": {
+  "poms_Acidified_ug_n_nReplicates": {
     "long_name": "Poms Acidified Ug N N Replicates"
   },
-  "poms_ug_n_Acidified_range": {
+  "poms_Acidified_ug_n_range": {
     "long_name": "Poms Acidified Ug N Range"
   },
-  "poms_volume_Acidified": {
+  "poms_Acidified_volume": {
     "long_name": "Poms Acidified Volume"
   },
   "poms_analyzing_lab": {
@@ -1529,96 +1530,96 @@
   "poms_lab_technician": {
     "long_name": "Poms  Lab Technician"
   },
-  "poms_acidification_method_nonAcidified": {
+  "poms_nonAcidified_acidification_method": {
     "long_name": "Poms Non Acidified Acidification Method"
   },
-  "poms_analyzing_lab_nonAcidified": {
+  "poms_nonAcidified_analyzing_lab": {
     "long_name": "Poms Non Acidified Analyzing Lab"
   },
-  "poms_c_flag_nonAcidified": {
+  "poms_nonAcidified_c_flag": {
     "long_name": "Poms Non Acidified C Flag"
   },
-  "poms_corr_delta13c_nonAcidified": {
+  "poms_nonAcidified_corr_delta13c": {
     "long_name": "Poms Non Acidified Corr Delta13c"
   },
-  "poms_corr_delta13c_nonAcidified_nReplicates": {
+  "poms_nonAcidified_corr_delta13c_nReplicates": {
     "long_name": "Poms Non Acidified Corr Delta13c N Replicates"
   },
-  "poms_corr_delta13c_nonAcidified_range": {
+  "poms_nonAcidified_corr_delta13c_range": {
     "long_name": "Poms Non Acidified Corr Delta13c Range"
   },
-  "poms_corr_delta15n_nonAcidified": {
+  "poms_nonAcidified_corr_delta15n": {
     "long_name": "Poms Non Acidified Corr Delta15n"
   },
-  "poms_corr_delta15n_nonAcidified_nReplicates": {
+  "poms_nonAcidified_corr_delta15n_nReplicates": {
     "long_name": "Poms Non Acidified Corr Delta15n N Replicates"
   },
-  "poms_corr_delta15n_nonAcidified_range": {
+  "poms_nonAcidified_corr_delta15n_range": {
     "long_name": "Poms Non Acidified Corr Delta15n Range"
   },
-  "poms_date_nonAcidified": {
+  "poms_nonAcidified_date": {
     "long_name": "Poms Non Acidified Date",
     "standard_name": "time"
   },
-  "poms_filter_portion_nonAcidified": {
+  "poms_nonAcidified_filter_portion": {
     "long_name": "Poms Non Acidified Filter Portion"
   },
-  "poms_filter_size_mm_nonAcidified": {
+  "poms_nonAcidified_filter_size_mm": {
     "long_name": "Poms Non Acidified Filter Size Mm"
   },
-  "poms_filter_type_nonAcidified": {
+  "poms_nonAcidified_filter_type": {
     "long_name": "Poms Non Acidified Filter Type"
   },
-  "poms_hakai_id_nonAcidified": {
+  "poms_nonAcidified_hakai_id": {
     "long_name": "Poms Non Acidified Hakai Id"
   },
-  "poms_lab_technician_nonAcidified": {
+  "poms_nonAcidified_lab_technician": {
     "long_name": "Poms Non Acidified Lab Technician"
   },
-  "poms_n_flag_nonAcidified": {
+  "poms_nonAcidified_n_flag": {
     "long_name": "Poms Non Acidified N Flag"
   },
-  "poms_post_weight_mg_nonAcidified": {
+  "poms_nonAcidified_post_weight_mg": {
     "long_name": "Poms Non Acidified Post Weight Mg"
   },
-  "poms_pre_weight_mg_nonAcidified": {
+  "poms_nonAcidified_pre_weight_mg": {
     "long_name": "Poms Non Acidified Pre Weight Mg"
   },
-  "poms_preserved_nonAcidified": {
+  "poms_nonAcidified_preserved": {
     "long_name": "Poms Non Acidified Preserved",
     "standard_name": "time"
   },
-  "poms_quality_level_nonAcidified": {
+  "poms_nonAcidified_quality_level": {
     "long_name": "Poms Non Acidified Quality Level"
   },
-  "poms_quality_log_nonAcidified": {
+  "poms_nonAcidified_quality_log": {
     "long_name": "Poms Non Acidified Quality Log"
   },
-  "poms_row_flag_nonAcidified": {
+  "poms_nonAcidified_row_flag": {
     "long_name": "Poms Non Acidified Row Flag"
   },
-  "poms_source_nonAcidified": {
+  "poms_nonAcidified_source": {
     "long_name": "Poms Non Acidified Source"
   },
-  "poms_ug_c_nonAcidified": {
+  "poms_nonAcidified_ug_c": {
     "long_name": "Poms Non Acidified Ug C"
   },
-  "poms_ug_c_nonAcidified_nReplicates": {
+  "poms_nonAcidified_ug_c_nReplicates": {
     "long_name": "Poms Non Acidified Ug C N Replicates"
   },
-  "poms_ug_c_nonAcidified_range": {
+  "poms_nonAcidified_ug_c_range": {
     "long_name": "Poms Non Acidified Ug C Range"
   },
-  "poms_ug_n_nonAcidified": {
+  "poms_nonAcidified_ug_n": {
     "long_name": "Poms Non Acidified Ug N"
   },
-  "poms_ug_n_nonAcidified_nReplicates": {
+  "poms_nonAcidified_ug_n_nReplicates": {
     "long_name": "Poms Non Acidified Ug N N Replicates"
   },
-  "poms_ug_n_nonAcidified_range": {
+  "poms_nonAcidified_ug_n_range": {
     "long_name": "Poms Non Acidified Ug N Range"
   },
-  "poms_volume_nonAcidified": {
+  "poms_nonAcidified_volume": {
     "long_name": "Poms Non Acidified Volume"
   },
   "poms_pre_weight_mg": {

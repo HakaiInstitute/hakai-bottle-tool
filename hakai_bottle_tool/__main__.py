@@ -109,7 +109,8 @@ agg_rename = {
     "ptp": "range",
     "join": "",
     "mean": "",
-}
+    "std" : "std"
+    }
 
 
 def join_sample_data(station, time_min=None, time_max=None):
@@ -161,18 +162,19 @@ def join_sample_data(station, time_min=None, time_max=None):
         )
 
         # Rename columns
+        # Rename stats variable based on predefined mapping, reverse other of tuples, join by underscore and replace white space by underscore
         prefix = endpoint.rsplit("/", 1)[1]
-        df_endpoint.columns = [
-            (
-                prefix
-                + "_"
-                + "_".join(list(var[1:]) + [agg_rename.get(var[0], var[0])])
-            ).replace(" ", "_")
-            for var in df_endpoint.columns
-        ]
-        df_endpoint.columns = [
-            var[:-1] if var[-1] == "_" else var for var in df_endpoint.columns
-        ]
+        new_columns = []
+        for col in df_endpoint.columns:
+            stats = agg_rename[col[0]]
+            name = list(col[::-1])[:-1]
+            if stats == "":
+                new_var = prefix + '_' + '_'.join(name)
+            else:
+                new_var = prefix + '_' + '_'.join(name + [stats])
+
+            new_columns += [new_var.replace(' ','_')]
+        df_endpoint.columns = new_columns
 
         # Convert collected to datetime
         # FIXME Hakai EIMS return time data in America/Vancouver timezone eventhough the format output has the 'Z' letter following which suggests it is in UTC.
