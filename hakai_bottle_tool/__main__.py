@@ -1,4 +1,4 @@
-from hakai_bottle_tool.hakai_bottle_tool import get_bottle_data,save_bottle_to
+from hakai_bottle_tool.hakai_bottle_tool import get_bottle_data,save_bottle_to,filter_bottle_variables
 import argparse
 
 if __name__ == "__main__":
@@ -28,6 +28,13 @@ if __name__ == "__main__":
         type=str,
         default=None,
     )
+    parser.add_argument(
+        "-variable_list",
+        help="File output path",
+        type=str,
+        default='Reduced',
+    )
+
 
     args = parser.parse_args()
     print(
@@ -35,5 +42,8 @@ if __name__ == "__main__":
     )
     df = get_bottle_data(args.station[0], args.time_min, args.time_max)
 
+    df  = filter_bottle_variables(df,args.variable_list)
+
     # Save to file format
+    print(f"Save to file")
     save_bottle_to(df, args.station[0], args.output_path, args.format)
