@@ -3,6 +3,8 @@ import numpy as np
 
 import json
 import re
+import warnings
+
 from hakai_api import Client
 
 import os
@@ -133,11 +135,18 @@ def join_sample_data(station, time_min=None, time_max=None):
         print(f"Download data from: {endpoint}")
         url = f"{client.api_root}/{endpoint}?{filter_url}"
         response = client.get(url)
+
+        # If failed to connect raise status
+        if response.status_code != 200:
+            response.raise_for_status()
+
         df_endpoint = pd.DataFrame(response.json())
 
         if df_endpoint.empty:
-            print(f"No data availabe from {endpoint}")
+            warnings.warn("Failed to retrieve any data", UserWarning)
             continue
+        else:
+            print(f"Downloaded: {len(df_endpoint)} records")
 
         # Drop variables we don't want
         df_endpoint = df_endpoint.drop(columns=ignored_variable_list, errors="ignore")
