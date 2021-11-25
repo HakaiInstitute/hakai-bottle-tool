@@ -517,6 +517,10 @@ def export_to_netcdf(df, output_path=None):
     Returns:
        str : path to saved file
     """
+    # Default output_path to local directory
+    if output_path is None:
+        output_path = ''
+
     # Convert datetime variables to timezone unaware datetime64 format in UTC
     for var, var_type in df.dtypes.to_dict().items():
         if "datetime" in f"{var_type}":
