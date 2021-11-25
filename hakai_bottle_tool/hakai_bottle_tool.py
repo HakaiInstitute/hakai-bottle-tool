@@ -19,7 +19,6 @@ bottle_sample_endpoints = {
     },
     "eims/views/output/microbial": {"pivot": "microbial_sample_type"},
     "eims/views/output/hplc": {},
-    "eims/views/output/o18": {},
     "eims/views/output/poms": {
         "map_values": {"acidified": {True: "Acidified", False: "nonAcidified"}},
         "pivot": "acidified",
@@ -30,7 +29,6 @@ bottle_sample_endpoints = {
         "map_values": {"filter_type": {"GF/F": "GF_F", "Bulk GF/F": "Bulk_GF_F"}},
         "pivot": "filter_type",
     },
-    "eims/views/output/doc": {},
 }
 
 ctd_endpoint = "ctd/views/file/cast/data"
