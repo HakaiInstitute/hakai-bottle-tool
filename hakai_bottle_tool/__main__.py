@@ -1,4 +1,4 @@
-from hakai_bottle_tool.hakai_bottle_tool import get_bottle_data,save_bottle_to,filter_bottle_variables
+from hakai_bottle_tool.hakai_bottle_tool import get_bottle_data,export_to_netcdf,filter_bottle_variables
 import argparse
 
 if __name__ == "__main__":
@@ -46,4 +46,4 @@ if __name__ == "__main__":
 
     # Save to file format
     print(f"Save to file")
-    save_bottle_to(df, args.station[0], args.output_path, args.format)
+    export_to_netcdf(df, args.station[0], args.output_path)

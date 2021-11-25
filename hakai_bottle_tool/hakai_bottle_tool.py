@@ -1,12 +1,10 @@
-from typing import ItemsView
 import pandas as pd
 import numpy as np
-import xarray as xr
-import json
 
+import json
+import re
 from hakai_api import Client
 
-import argparse
 import os
 
 client = Client()
@@ -491,7 +489,7 @@ def filter_bottle_variables(df, filter_variables):
     return df.filter(items=variable_list)
 
 
-def save_bottle_to(df, station, output_path=None, output_format="netcdf"):
+def export_to_netcdf(df, output_path=None):
     """AI is creating summary for save_bottle_to
 
     Args:
@@ -503,39 +501,39 @@ def save_bottle_to(df, station, output_path=None, output_format="netcdf"):
     Returns:
        str : path to saved file
     """
+    # Convert datetime variables to timezone unaware datetime64 format in UTC
+    for var, var_type in df.dtypes.to_dict().items():
+        if "datetime" in f"{var_type}":
+            df[var] = df[var].dt.tz_convert("UTC").dt.tz_localize(None)
 
-    def default_file_name_convention():
-        return f"{station}_BottleData_{df['time'].min().strftime('%Y%m%dT%H%M%S')}-{df['time'].max().strftime('%Y%m%dT%H%M%S')}"
+    ds = df.to_xarray()
+    with open(
+        os.path.join(module_path, "config", "bottle_netcdf_attributes.json"), "r"
+    ) as f:
+        attributes = json.loads(f.read())
 
-    if output_format == "netcdf":
-        # Convert datetime variables to timezone unaware datetime64 format in UTC
-        for var, var_type in df.dtypes.to_dict().items():
-            if "datetime" in f"{var_type}":
-                df[var] = df[var].dt.tz_convert("UTC").dt.tz_localize(None)
+    # Add Global Attributes
+    ds.attrs = attributes["NC_GLOBAL"]
 
-        ds = df.to_xarray()
-        with open(
-            os.path.join(module_path, "config", "bottle_netcdf_attributes.json"), "r"
-        ) as f:
-            attributes = json.loads(f.read())
+    # Add Variable Attributes
+    for var in ds:
+        if var in attributes:
+            ds[var].attrs = attributes[var]
 
-        # Add Global Attributes
-        ds.attrs = attributes["NC_GLOBAL"]
-
-        # Add Variable Attributes
-        for var in ds:
-            if var in attributes:
-                ds[var].attrs = attributes[var]
-
-        # Save to file
-        if output_path is None:
-            output_path = default_file_name_convention() + ".nc"
-        ds.to_netcdf(output_path)
-
-    elif output_format == "csv":
-        if output_path is None:
-            output_path = default_file_name_convention() + ".csv"
-        df.to_csv(output_path)
+    # Loop through each groups and save grouped files
+    for work_area, ds_work_area in ds.groupby('work_area'):
+        for site_id, ds_site in ds_work_area.groupby('site_id'):
+            for collected, ds_collected in ds_site.groupby('collected'):
+                #Format name
+                subdir = os.path.join(work_area,site_id)
+                filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(':','')
+                filename = re.sub('\:|\-|\.0+','',filename)
+                # Generate subfolder if it doesnt' exist yet
+                if not os.path.exists(os.path.join(output_path,subdir)):
+                    os.makedirs(os.path.join(output_path,subdir))
+                
+                # Save NetCDF
+                ds_collected.to_netcdf(os.path.join(output_path,subdir,filename))
 
 
 def read_variable_list_file(path):
