@@ -25,7 +25,7 @@ pip install git+https://github.com/HakaiInstitute/hakai-bottle-tool.git
 You however don't need to install necessarily the package and just use the following jupyter notebook on google colab [here](https://colab.research.google.com/github/HakaiInstitute/hakai-bottle-tool/blob/master/run_hakai_bottle_tool.ipynb).
 
 ## How To
-The hakai-bottle-tool can either be run on the [google colab jupyter notebooke](https://colab.research.google.com/github/HakaiInstitute/hakai-bottle-tool/blob/master/run_hakai_bottle_tool.ipynb) or, if installed locally, by running the following command:
+The hakai-bottle-tool can either be run on the [google colab jupyter notebook](https://colab.research.google.com/github/HakaiInstitute/hakai-bottle-tool/blob/master/run_hakai_bottle_tool.ipynb) or, if installed locally, by running the following command:
 ```console
 > python hakai_bottle_tool -station QU39 -time_min 2020-01-01 -time_max 2021-01-01
 ```
