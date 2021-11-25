@@ -443,6 +443,7 @@ def create_aggregated_meta_variables(df):
     )
     df["time"] = df["collected"]
     df["depth"] = df["pressure_transducer_depth"].fillna(df["line_out_depth"])
+    df['depth_difference'] = df['depth'] - df['ctd_depth']
 
     # Remove columns that have been aggregated we assume that all have the same values
     _drop_regex = (
