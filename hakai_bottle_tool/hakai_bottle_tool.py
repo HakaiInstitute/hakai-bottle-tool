@@ -14,7 +14,9 @@ module_path = os.path.dirname(os.path.abspath(__file__))
 
 # Define each sample type endpoint and the need transformations needed per endpoint
 bottle_sample_endpoints = {
-    "eims/views/output/nutrients": {},
+    "eims/views/output/nutrients": {
+        'query_filter': "&(no2_no3_flag!=SVD|no2_no3_flag=null)&(po4_flag!=SVD|po4_flag=null)&(sio2_flag!=SVD|sio2_flag=null)"
+    },
     "eims/views/output/microbial": {"pivot": "microbial_sample_type"},
     "eims/views/output/hplc": {},
     "eims/views/output/o18": {},
@@ -24,6 +26,7 @@ bottle_sample_endpoints = {
     },
     "eims/views/output/ysi": {},
     "eims/views/output/chlorophyll": {
+        "query_filter": "&(chla_flag!=SVD|chla_flag=null)&(phaeo_flag!=SVD|phaeo_flag=null)",
         "map_values": {"filter_type": {"GF/F": "GF_F", "Bulk GF/F": "Bulk_GF_F"}},
         "pivot": "filter_type",
     },
@@ -131,9 +134,15 @@ def join_sample_data(station, time_min=None, time_max=None):
         filter_url += f"&collected>={time_min}"
     if time_max:
         filter_url += f"&collected<={time_max}"
+
+
     for endpoint, attrs in bottle_sample_endpoints.items():
-        print(f"Download data from: {endpoint}")
         url = f"{client.api_root}/{endpoint}?{filter_url}"
+        # query_filter input if exist 
+        if 'query_filter' in attrs:
+            url += attrs['query_filter']
+
+        print(f"Download data from: {url}")
         response = client.get(url)
 
         # If failed to connect raise status
