@@ -46,4 +46,4 @@ if __name__ == "__main__":
 
     # Save to file format
     print(f"Save to file")
-    export_to_netcdf(df, args.station[0], args.output_path)
+    export_to_netcdf(df, args.output_path)
