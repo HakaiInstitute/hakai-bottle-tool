@@ -45,5 +45,5 @@ if __name__ == "__main__":
     df  = filter_bottle_variables(df,args.variable_list)
 
     # Save to file format
-    print(f"Save to file")
+    print(f"Save to NetCDF")
     export_to_netcdf(df, args.output_path)
