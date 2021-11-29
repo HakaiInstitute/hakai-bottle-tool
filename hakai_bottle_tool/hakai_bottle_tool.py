@@ -545,6 +545,7 @@ def export_to_netcdf(df, output_path=None):
     for work_area, ds_work_area in ds.groupby('work_area'):
         for site_id, ds_site in ds_work_area.groupby('site_id'):
             print(f'Save bottle data by work_area={work_area}, station={site_id} and by date')
+            for collected, ds_collected in ds_site.groupby('collected.date'):
                 #Format name
                 subdir = os.path.join(work_area,site_id)
                 filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(':','')
