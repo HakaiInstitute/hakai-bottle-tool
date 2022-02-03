@@ -57,42 +57,57 @@ ignored_variable_list = [
 ]
 
 # Variable list to ignore from the CTD data
-ctd_variable_to_ignore = [
-    "device_firmware",
-    "file_processing_stage",
-    "shutoff",
-    "ctd_file_pk",
-    "ctd_data_pk",
-    "v_main",
-    "v_lith",
-    "i_pump",
-    "i_ext01",
-    "i_ext2345",
-    "cast_processing_stage",
-    "status",
-    "duration",
-    "start_depth",
-    "bottom_depth",
-    "target_depth",
-    "drop_speed",
-    "vessel",
-    "operators",
-    "pruth_air_pressure_before_cast",
-    "min_pressure_before_cast",
-    "min_depth_before_cast",
-    "min_pressure_after_cast",
-    "min_depth_after_cast",
-    "estimated_air_pressure",
-    "estimated_depth_shift",
-    "original_start_dt",
-    "original_bottom_dt",
-    "original_start_depth",
-    "original_bottom_depth",
+ctd_considered_variables = [
+    "hakai_id",
+    "device_model",
+    "device_sn",
+    "work_area",
+    "cruise",
+    "station",
+    "station_longitude",
+    "station_latitude",
+    "distance_from_station",
+    "latitude",
+    "longitude",
+    "start_dt",
+    "bottom_dt",
+    "end_dt",
+    "direction_flag",
+    "measurement_dt",
+    "conductivity",
+    "conductivity_flag",
+    "temperature",
+    "temperature_flag",
+    "depth",
+    "depth_flag",
+    "pressure",
+    "pressure_flag",
+    "par",
+    "par_flag",
+    "flc",
+    "flc_flag",
+    "turbidity",
+    "turbidity_flag",
+    "ph",
+    "ph_flag",
+    "salinity",
+    "salinity_flag",
     "spec_cond",
     "spec_cond_flag",
-    "oxygen_voltage",
-    "oxygen_voltage_flag",
-    "cast_number",
+    "dissolved_oxygen_ml_l",
+    "dissolved_oxygen_ml_l_flag",
+    "rinko_do_ml_l",
+    "rinko_do_ml_l_flag",
+    "dissolved_oxygen_percent",
+    "dissolved_oxygen_percent_flag",
+    "c_star_at",
+    "c_star_at_flag",
+    "sos_un",
+    "sos_un_flag",
+    "backscatter_beta",
+    "backscatter_beta_flag",
+    "cdom_ppb",
+    "cdom_ppb_flag",
 ]
 
 index_default_list = [
@@ -250,11 +265,12 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
     # Get CTD Data
     print("Download CTD data")
-    filter_url = f"limit=-1&pressure!=null&station={station}"
+    filter_url = f"limit=-1&pressure!=null&station={station}&direction_flag=d"
     if time_min:
         filter_url += f"&measurement_dt>{time_min}"
     if time_max:
         filter_url += f"&measurement_dt<{time_max}"
+    filter_url += f"&fields={','.join(ctd_considered_variables)}"
     url = f"{client.api_root}/{ctd_endpoint}?{filter_url}"
     response = client.get(url)
     df_ctd = pd.DataFrame(response.json())
