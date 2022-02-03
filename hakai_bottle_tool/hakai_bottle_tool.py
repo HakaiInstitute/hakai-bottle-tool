@@ -15,7 +15,7 @@ module_path = os.path.dirname(os.path.abspath(__file__))
 # Define each sample type endpoint and the need transformations needed per endpoint
 bottle_sample_endpoints = {
     "eims/views/output/nutrients": {
-        'query_filter': "&(no2_no3_flag!=SVD|no2_no3_flag=null)&(po4_flag!=SVD|po4_flag=null)&(sio2_flag!=SVD|sio2_flag=null)"
+        "query_filter": "&(no2_no3_flag!=SVD|no2_no3_flag=null)&(po4_flag!=SVD|po4_flag=null)&(sio2_flag!=SVD|sio2_flag=null)"
     },
     "eims/views/output/microbial": {"pivot": "microbial_sample_type"},
     "eims/views/output/hplc": {},
@@ -125,8 +125,8 @@ agg_rename = {
     "ptp": "range",
     "join": "",
     "mean": "",
-    "std" : "std"
-    }
+    "std": "std",
+}
 
 
 def join_sample_data(station, time_min=None, time_max=None):
@@ -148,12 +148,11 @@ def join_sample_data(station, time_min=None, time_max=None):
     if time_max:
         filter_url += f"&collected<={time_max}"
 
-
     for endpoint, attrs in bottle_sample_endpoints.items():
         url = f"{client.api_root}/{endpoint}?{filter_url}"
-        # query_filter input if exist 
-        if 'query_filter' in attrs:
-            url += attrs['query_filter']
+        # query_filter input if exist
+        if "query_filter" in attrs:
+            url += attrs["query_filter"]
 
         print(f"Download data from: {url}")
         response = client.get(url)
@@ -198,11 +197,11 @@ def join_sample_data(station, time_min=None, time_max=None):
             stats = agg_rename[col[0]]
             name = list(col[::-1])[:-1]
             if stats == "":
-                new_var = prefix + '_' + '_'.join(name)
+                new_var = prefix + "_" + "_".join(name)
             else:
-                new_var = prefix + '_' + '_'.join(name + [stats])
+                new_var = prefix + "_" + "_".join(name + [stats])
 
-            new_columns += [new_var.replace(' ','_')]
+            new_columns += [new_var.replace(" ", "_")]
         df_endpoint.columns = new_columns
 
         # Convert collected to datetime
@@ -459,7 +458,7 @@ def create_aggregated_meta_variables(df):
     )
     df["time"] = df["collected"]
     df["depth"] = df["pressure_transducer_depth"].fillna(df["line_out_depth"])
-    df['depth_difference'] = df['depth'] - df['ctd_depth']
+    df["depth_difference"] = df["depth"] - df["ctd_depth"]
 
     # Remove columns that have been aggregated we assume that all have the same values
     _drop_regex = (
@@ -536,7 +535,7 @@ def export_to_netcdf(df, output_path=None):
     """
     # Default output_path to local directory
     if output_path is None:
-        output_path = ''
+        output_path = ""
 
     # Convert datetime variables to timezone unaware datetime64 format in UTC
     for var, var_type in df.dtypes.to_dict().items():
@@ -558,20 +557,24 @@ def export_to_netcdf(df, output_path=None):
             ds[var].attrs = attributes[var]
 
     # Loop through each groups and save grouped files
-    for work_area, ds_work_area in ds.groupby('work_area'):
-        for site_id, ds_site in ds_work_area.groupby('site_id'):
-            print(f'Save bottle data by work_area={work_area}, station={site_id} and by date')
-            for collected, ds_collected in ds_site.groupby('collected.date'):
-                #Format name
-                subdir = os.path.join(work_area,site_id)
-                filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(':','')
-                filename = re.sub('\:|\-|\.0+','',filename)
+    for work_area, ds_work_area in ds.groupby("work_area"):
+        for site_id, ds_site in ds_work_area.groupby("site_id"):
+            print(
+                f"Save bottle data by work_area={work_area}, station={site_id} and by date"
+            )
+            for collected, ds_collected in ds_site.groupby("collected.date"):
+                # Format name
+                subdir = os.path.join(work_area, site_id)
+                filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(
+                    ":", ""
+                )
+                filename = re.sub("\:|\-|\.0+", "", filename)
                 # Generate subfolder if it doesnt' exist yet
-                if not os.path.exists(os.path.join(output_path,subdir)):
-                    os.makedirs(os.path.join(output_path,subdir))
-                
+                if not os.path.exists(os.path.join(output_path, subdir)):
+                    os.makedirs(os.path.join(output_path, subdir))
+
                 # Save NetCDF
-                new_file = os.path.join(output_path,subdir,filename)
+                new_file = os.path.join(output_path, subdir, filename)
                 print(f"Save: {new_file}")
                 ds_collected.to_netcdf(new_file)
 
