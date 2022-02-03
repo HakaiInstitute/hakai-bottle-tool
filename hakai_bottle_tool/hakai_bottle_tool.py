@@ -208,12 +208,7 @@ def join_sample_data(station, time_min=None, time_max=None):
         # FIXME Hakai EIMS return time data in America/Vancouver timezone eventhough the format output has the 'Z' letter following which suggests it is in UTC.
         #   Because of that, we have to read and drop the timezone and apply the correct one and finally convert to UTC
         df_endpoint = df_endpoint.reset_index().sort_values("collected")
-        df_endpoint["collected"] = (
-            pd.to_datetime(df_endpoint["collected"])
-            .dt.tz_localize(None)
-            .dt.tz_localize("America/Vancouver")
-            .dt.tz_convert("UTC")
-        )
+        df_endpoint["collected"] = pd.to_datetime(df_endpoint["collected"])
 
         # Merge data to previously downloaded one
         if df.empty:
