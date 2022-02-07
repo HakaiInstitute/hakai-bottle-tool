@@ -116,7 +116,6 @@ index_default_list = [
     "event_pk",
     "collected",
     "line_out_depth",
-    "pressure_transducer_depth",
 ]
 agg_funcs = [np.ptp, "mean", "std", "count", ",".join]
 
@@ -223,8 +222,15 @@ def join_sample_data(station, time_min=None, time_max=None):
                 allow_exact_matches=True,
             )
 
-    # Define bottle_depth
+    # Define bottle_depth, find list of pressure_transducer_depth columns and averaged
+    pressure_transducer_depth_columns = df.filter(
+        like="pressure_transducer_depth"
+    ).columns
+    df["pressure_transducer_depth"] = df.filter(
+        regex="pressure_transducer_depth$"
+    ).mean(axis="columns")
     df["bottle_depth"] = df["pressure_transducer_depth"].fillna(df["line_out_depth"])
+    df = df.drop(columns=pressure_transducer_depth_columns)
     return df
 
 
