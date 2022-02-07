@@ -204,8 +204,6 @@ def join_sample_data(station, time_min=None, time_max=None):
         df_endpoint.columns = new_columns
 
         # Convert collected to datetime
-        # FIXME Hakai EIMS return time data in America/Vancouver timezone eventhough the format output has the 'Z' letter following which suggests it is in UTC.
-        #   Because of that, we have to read and drop the timezone and apply the correct one and finally convert to UTC
         df_endpoint = df_endpoint.reset_index().sort_values("collected")
         df_endpoint["collected"] = pd.to_datetime(df_endpoint["collected"])
 
@@ -272,6 +270,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         filter_url += f"&measurement_dt<{time_max}"
     filter_url += f"&fields={','.join(ctd_considered_variables)}"
     url = f"{client.api_root}/{ctd_endpoint}?{filter_url}"
+    print(url)
     response = client.get(url)
     df_ctd = pd.DataFrame(response.json())
     if df_ctd.empty:
@@ -417,6 +416,8 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     if len(df_not_matched) > 0:
         df_bottles_matched = pd.concat([df_bottles_matched, df_not_matched])
 
+    # Sort data 
+    df_bottles_matched = df_bottles_matched.sort_values(['site_id','collected','line_out_depth'])
     return df_bottles_matched
 
 
