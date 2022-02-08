@@ -298,7 +298,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         on="matching_time",
         left_by=["site_id", "matching_depth"],
         right_by=["ctd_station", "matching_depth"],
-        tolerance=pd.Timedelta("3h"),
+        tolerance=pd.Timedelta("4h"),
         allow_exact_matches=True,
         direction="nearest",
     )
@@ -325,7 +325,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
             on="matching_time",
             left_by="site_id",
             right_by="ctd_station",
-            tolerance=pd.Timedelta("1d"),
+            tolerance=pd.Timedelta("4h"),
             allow_exact_matches=True,
             direction="nearest",
         )
@@ -353,7 +353,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     n_bottles = n_bottles - len(df_bottles_matched)
 
     # Then try to match whatever closest depth sample depth within the allowed time range
-    dt = pd.Timedelta("1d")
+    dt = pd.Timedelta("4h")
     df_bottles_depth = pd.DataFrame()
     df_bottles_drop_unmatched = pd.DataFrame()
     if len(df_not_matched) > 0:
