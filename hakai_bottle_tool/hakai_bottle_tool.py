@@ -216,7 +216,7 @@ def join_sample_data(station, time_min=None, time_max=None):
                 df_endpoint,
                 by=index_list,
                 on="collected",
-                tolerance=pd.Timedelta("5minutes"),
+                tolerance=pd.Timedelta("15minutes"),
                 allow_exact_matches=True,
             )
 
@@ -416,8 +416,10 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     if len(df_not_matched) > 0:
         df_bottles_matched = pd.concat([df_bottles_matched, df_not_matched])
 
-    # Sort data 
-    df_bottles_matched = df_bottles_matched.sort_values(['site_id','collected','line_out_depth'])
+    # Sort data
+    df_bottles_matched = df_bottles_matched.sort_values(
+        ["site_id", "collected", "line_out_depth"]
+    )
     return df_bottles_matched
 
 
