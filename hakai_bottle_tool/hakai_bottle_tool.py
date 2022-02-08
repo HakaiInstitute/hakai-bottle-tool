@@ -263,7 +263,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
     # Get CTD Data
     print("Download CTD data")
-    filter_url = f"limit=-1&pressure!=null&station={station}&direction_flag=d"
+    filter_url = f"limit=-1&pressure!=null&salinity!=-9.99e-29&station={station}&direction_flag=d"
     if time_min:
         filter_url += f"&measurement_dt>{time_min}"
     if time_max:
