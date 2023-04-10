@@ -29,6 +29,7 @@ bottle_sample_endpoints = {
         "map_values": {"filter_type": {"GF/F": "GF_F", "Bulk GF/F": "Bulk_GF_F"}},
         "pivot": "filter_type",
     },
+    "eims/views/output/phytoplankton": {}
 }
 
 ctd_endpoint = "ctd/views/file/cast/data"
