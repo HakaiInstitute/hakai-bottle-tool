@@ -9,6 +9,7 @@ The hakai bottle tool join together sample and ctd profile data collected by the
     "eims/views/output/poms",
     "eims/views/output/ysi",
     "eims/views/output/chlorophyll",
+    "eims/views/output/phytoplankton",
 }
 ```
 
