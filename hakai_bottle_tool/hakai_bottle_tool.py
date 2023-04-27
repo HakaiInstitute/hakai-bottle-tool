@@ -338,8 +338,8 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         df_bottle.sort_values("matching_time"),
         df_ctd.sort_values(["matching_time"]),
         on="matching_time",
-        left_by=["work_area","site_id", "matching_depth"],
-        right_by=["ctd_work_area","ctd_station", "matching_depth"],
+        left_by=["work_area", "site_id", "matching_depth"],
+        right_by=["ctd_work_area", "ctd_station", "matching_depth"],
         tolerance=pd.Timedelta("4h"),
         allow_exact_matches=True,
         direction="nearest",
@@ -475,13 +475,13 @@ def create_aggregated_meta_variables(df):
 
     # Split lat and gather lat
     df = df.assign(
-        time =  df["collected"],
-        depth =  df["bottle_depth"],
-        depth_difference = df["bottle_depth"] - df["ctd_depth"],
+        time=df["collected"],
+        depth=df["bottle_depth"],
+        depth_difference=df["bottle_depth"] - df["ctd_depth"],
         latitude=df.filter(regex="_lat$").median(axis=1),
-        longitude= df.filter(regex="_long$").median(axis=1),
-        preciseLat= df.filter(regex="_gather_lat$").median(axis=1),
-        preciseLon= df.filter(regex="_gather_long$").median(axis=1)
+        longitude=df.filter(regex="_long$").median(axis=1),
+        preciseLat=df.filter(regex="_gather_lat$").median(axis=1),
+        preciseLon=df.filter(regex="_gather_long$").median(axis=1),
     )
 
     # Remove columns that have been aggregated we assume that all have the same values
@@ -511,7 +511,7 @@ def get_bottle_data(
     df = join_sample_data(station, time_min, time_max)
     # Matched to ctd data
     df = join_ctd_data(df, station, time_min, time_max)
-    df = df.dropna(axis='columns',how='all')
+    df = df.dropna(axis="columns", how="all")
     df = create_aggregated_meta_variables(df)
     return df
 
