@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="hakai_bottle_tool",
@@ -10,6 +10,6 @@ setup(
     author="Jessy Barrette",
     author_email="Jessy.Barrette@hakai.org",
     description="Method use to combine Hakai sample data to CTD profile data.",
-    install_requires=["pandas", "numpy", "hakai_api", "plotly", "xarray","NetCDF4"],
+    install_requires=["pandas", "numpy", "hakai_api", "plotly", "xarray", "NetCDF4"],
     include_package_data=True,
 )

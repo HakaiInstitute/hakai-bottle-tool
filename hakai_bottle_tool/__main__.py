@@ -1,5 +1,8 @@
-from hakai_bottle_tool.hakai_bottle_tool import get_bottle_data,export_to_netcdf,filter_bottle_variables
 import argparse
+
+from hakai_bottle_tool.hakai_bottle_tool import (export_to_netcdf,
+                                                 filter_bottle_variables,
+                                                 get_bottle_data)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Join CTD vs Bottle Sample data")
@@ -32,9 +35,8 @@ if __name__ == "__main__":
         "--variable_list",
         help="File output path",
         type=str,
-        default='Reduced',
+        default="Reduced",
     )
-
 
     args = parser.parse_args()
     print(
@@ -42,7 +44,7 @@ if __name__ == "__main__":
     )
     df = get_bottle_data(args.station[0], args.time_min, args.time_max)
 
-    df  = filter_bottle_variables(df,args.variable_list)
+    df = filter_bottle_variables(df, args.variable_list)
 
     # Save to file format
     print(f"Save to NetCDF")
