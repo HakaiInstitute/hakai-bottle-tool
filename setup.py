@@ -10,6 +10,6 @@ setup(
     author="Jessy Barrette",
     author_email="Jessy.Barrette@hakai.org",
     description="Method use to combine Hakai sample data to CTD profile data.",
-    install_requires=["pandas", "numpy", "hakai_api"],
+    install_requires=["pandas", "numpy", "hakai_api", "plotly", "xarray","NetCDF4"],
     include_package_data=True,
 )
