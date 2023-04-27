@@ -1,6 +1,6 @@
 name: Install package and run linter
 on:
-  pull_request:
+  push:
     branches:
       - master
       - development
