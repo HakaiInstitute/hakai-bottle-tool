@@ -6,7 +6,7 @@ on:
       - development
     paths:
       - hakai_bottle_tool/**
-      - tests/**
+      - tests/*
       - .github/workflows/**
 
 jobs:
