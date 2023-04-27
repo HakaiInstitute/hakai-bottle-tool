@@ -5,3 +5,5 @@
 venv/
 hakai_bottle_tool.egg-info/
 build/
+.DS_Store
+hakai_bottle_tool/__pycache__/**
