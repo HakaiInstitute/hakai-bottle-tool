@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from hakai_api import Client
 
-client = Client()
+client = Client(credentials= os.getenv("HAKAI_API_TOKEN"))
 module_path = os.path.dirname(os.path.abspath(__file__))
 
 # Define each sample type endpoint and the need transformations needed per endpoint
