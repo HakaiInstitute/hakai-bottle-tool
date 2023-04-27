@@ -13,10 +13,11 @@ pressure_transducer_depth
 sample_matching_depth
 nutrients_hakai_id
 nutrients_no2_no3_um
+nutrients_no2_no3_flag
 nutrients_po4
+nutrients_po4_flag
 nutrients_sio2
 nutrients_sio2_flag
-nutrients_no2_no3_flag
 microbial_Cell_Count_hakai_id
 microbial_DNA_hakai_id
 microbial_DNA_Protein_prefilter_hakai_id
