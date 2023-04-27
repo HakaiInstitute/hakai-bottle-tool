@@ -235,12 +235,10 @@ def join_sample_data(
             df = df_endpoint
             continue
 
+        # Add a column to review which new samples were matched
         df_endpoint = df_endpoint.reset_index().rename(
             columns={"index": "endpoint_index"}
         )
-        if "phytoplankton" in endpoint:
-            df_phyto = df_endpoint
-
         df = pd.merge_asof(
             df.sort_values("collected"),
             df_endpoint.sort_values("collected"),
@@ -249,7 +247,7 @@ def join_sample_data(
             tolerance=pd.Timedelta(bottle_matching_timedelta),
             allow_exact_matches=True,
         )
-        # Include samples that were not matched
+        # Include back samples that were not matched
         unmatched_samples = df_endpoint.loc[
             ~df_endpoint["endpoint_index"].isin(df["endpoint_index"])
         ]
