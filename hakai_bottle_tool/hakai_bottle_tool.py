@@ -115,21 +115,43 @@ index_default_list = [
     "work_area",
     "site_id",
     "event_pk",
-    "collected",
     "line_out_depth",
+    "collected",
 ]
-agg_funcs = [np.ptp, "mean", "std", "count", ",".join]
+agg_funcs = {(float,int):[np.ptp, "mean", "std","count"],(str,object):["count", ",".join]}
 
 agg_rename = {
-    "count": "nReplicates",
-    "ptp": "range",
-    "join": "",
-    "mean": "",
-    "std": "std",
+    "count": ["nReplicates"],
+    "ptp": ["range"],
+    "<lambda_0>": [],
+    "mean": [],
+    "std": ["std"],
 }
 
+def get_aggregate_function(df, ignore):
+    agg= {}
+    for var in df.columns:
+        if var in ignore:
+            continue
 
-def join_sample_data(station, time_min=None, time_max=None):
+        if df[var].dtype in (object,str,bool):
+            agg[var] = ["count", lambda x: ",".join([str(y) for y in x])]
+        else:
+            agg[var] = [np.ptp, "mean", "std","count"]
+    return agg
+
+def rename_agg_column(columns, prefix, ignore):
+    new_columns = []
+    for column in columns:
+        if column in ignore:
+            new_columns += [column]
+            continue
+        new_columns += [prefix + "_" + '_'.join([item for item in map(lambda x: agg_rename(x,x),columns) if item])]
+        
+    return new_columns
+
+
+def join_sample_data(station, time_min=None, time_max=None, bottle_matching_timedelta="1hour"):
     """join_sample_data
 
     Args:
@@ -156,70 +178,60 @@ def join_sample_data(station, time_min=None, time_max=None):
 
         print(f"Download data from: {url}")
         response = client.get(url)
-
-        # If failed to connect raise status
         if response.status_code != 200:
             response.raise_for_status()
-
-        df_endpoint = pd.DataFrame(response.json())
+        df_endpoint = pd.DataFrame(response.json()).astype({"pressure_transducer_depth":float})
 
         if df_endpoint.empty:
             warnings.warn("Failed to retrieve any data", UserWarning)
             continue
-        else:
-            print(f"Downloaded: {len(df_endpoint)} records")
+
+        print(f"Downloaded: {len(df_endpoint)} records")
 
         # Drop variables we don't want
         df_endpoint = df_endpoint.drop(columns=ignored_variable_list, errors="ignore")
-        index_list = [
-            item if item in df_endpoint else print(f"Missing : {item}")
-            for item in index_default_list
-        ]
+
         # Rename
         if "map_values" in attrs:
-            for var_map, mapping in attrs["map_values"].items():
-                df_endpoint[var_map] = df_endpoint[var_map].replace(mapping)
+            df_endpoint = df_endpoint.replace(attrs['map_values'])
 
         # Regroup data and apply pivot
-        if "pivot" not in attrs:
-            attrs["pivot"] = None
+        index_list = list(set(index_default_list) & set(df_endpoint.columns))
         df_endpoint = df_endpoint.pivot_table(
             index=index_list,
-            columns=attrs["pivot"],
-            aggfunc=agg_funcs,
+            columns=attrs.get("pivot"),
+            aggfunc=get_aggregate_function(df_endpoint, index_list),
         )
 
         # Rename columns
         # Rename stats variable based on predefined mapping, reverse other of tuples, join by underscore and replace white space by underscore
-        prefix = endpoint.rsplit("/", 1)[1]
-        new_columns = []
-        for col in df_endpoint.columns:
-            stats = agg_rename[col[0]]
-            name = list(col[::-1])[:-1]
-            if stats == "":
-                new_var = prefix + "_" + "_".join(name)
-            else:
-                new_var = prefix + "_" + "_".join(name + [stats])
-
-            new_columns += [new_var.replace(" ", "_")]
-        df_endpoint.columns = new_columns
-
-        # Convert collected to datetime
+        df_endpoint.columns = ['_'.join([endpoint.rsplit("/", 1)[1]] + [col[0]] +  agg_rename[col[1]]  + ([col[2]] if len(col)==3 else [])).replace(' ','_') for col in df_endpoint.columns ]
         df_endpoint = df_endpoint.reset_index().sort_values("collected")
         df_endpoint["collected"] = pd.to_datetime(df_endpoint["collected"])
 
         # Merge data to previously downloaded one
         if df.empty:
             df = df_endpoint
-        else:
-            df = pd.merge_asof(
-                df,
-                df_endpoint,
-                by=index_list,
-                on="collected",
-                tolerance=pd.Timedelta("15minutes"),
-                allow_exact_matches=True,
-            )
+            continue
+        
+        df_endpoint = df_endpoint.reset_index().rename(columns={"index": "endpoint_index"})
+        if "phytoplankton" in endpoint:
+            df_phyto = df_endpoint
+        
+        df = pd.merge_asof(
+            df.sort_values('collected'),
+            df_endpoint.sort_values('collected'),
+            by=index_list,
+            on="collected",
+            tolerance=pd.Timedelta(bottle_matching_timedelta),
+            allow_exact_matches=True,
+        )
+        # Include samples that were not matched
+        unmatched_samples = df_endpoint.loc[~df_endpoint['endpoint_index'].isin(df['endpoint_index'])]
+        df = df.drop(columns=['endpoint_index'])
+        unmatched_samples = unmatched_samples.drop(columns=['endpoint_index'])
+        print(f'{len(unmatched_samples)} samples were not matched to the previous ones. Add them on their own')
+        df = pd.concat([df,unmatched_samples],ignore_index=True)
 
     # Define bottle_depth, find list of pressure_transducer_depth columns and averaged
     pressure_transducer_depth_columns = df.filter(
@@ -230,6 +242,8 @@ def join_sample_data(station, time_min=None, time_max=None):
     ).mean(axis="columns")
     df["bottle_depth"] = df["pressure_transducer_depth"].fillna(df["line_out_depth"])
     df = df.drop(columns=pressure_transducer_depth_columns)
+
+    df = df.replace({'None':None})
     return df
 
 
@@ -356,7 +370,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     # Then try to match whatever closest depth sample depth within the allowed time range
     dt = pd.Timedelta("4h")
     df_bottles_depth = pd.DataFrame()
-    df_bottles_drop_unmatched = pd.DataFrame()
+    drop_unmatched = []
     if len(df_not_matched) > 0:
         # Loop through each collected times find any data collected nearby by time and try to match nearest depth
         for collected, drop in df_not_matched.drop(columns=["matching_time"]).groupby(
@@ -370,11 +384,11 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
             # No profile is available around that bottle sample
             if df_ctd_filtered.empty:
-                df_bottles_drop_unmatched = df_bottles_drop_unmatched.append(drop)
+                drop_unmatched += [drop]
                 continue
 
             # Match the bottles drop to the closest data within this time range
-            df_bottles_depth = df_bottles_depth.append(
+            df_bottles_depth = pd.concat([df_bottles_depth,
                 pd.merge_asof(
                     drop,
                     df_ctd_filtered.sort_values(["matching_depth"]),
@@ -384,7 +398,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
                     allow_exact_matches=True,
                     direction="nearest",
                 )
-            )
+            ])
 
         if len(df_bottles_depth) > 0:
             in_tolerance = _within_depth_tolerance(
@@ -403,7 +417,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         else:
             df_not_matched = pd.DataFrame()
 
-        df_not_matched = df_not_matched.append(df_bottles_drop_unmatched)
+        df_not_matched = pd.concat([df_not_matched] + drop_unmatched)
         no_matched_collected_times = (
             df_not_matched["collected"]
             .dt.strftime("%Y-%m-%dT%H:%M:%SZ")
