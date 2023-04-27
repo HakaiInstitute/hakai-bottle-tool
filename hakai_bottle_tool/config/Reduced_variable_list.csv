@@ -108,6 +108,14 @@ chlorophyll_20um_phaeo_flag
 chlorophyll_3um_phaeo_flag
 chlorophyll_Bulk_GF_F_phaeo_flag
 chlorophyll_GF_F_phaeo_flag
+phytoplankton_hakai_id
+phytoplankton_lugols
+phytoplankton_mesh_size__um_
+phytoplankton_net_dim___cm_
+phytoplankton_project_specific_id
+phytoplankton_quality_level
+phytoplankton_row_flag
+phytoplankton_sample_style
 ctd_ctd_cast_pk
 ctd_hakai_id
 ctd_filename
