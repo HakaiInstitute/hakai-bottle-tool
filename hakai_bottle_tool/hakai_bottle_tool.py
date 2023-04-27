@@ -110,7 +110,9 @@ ctd_considered_variables = [
 ]
 
 index_default_list = [
+    "organization",
     "work_area",
+    "survey",
     "site_id",
     "event_pk",
     "line_out_depth",
@@ -336,8 +338,8 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         df_bottle.sort_values("matching_time"),
         df_ctd.sort_values(["matching_time"]),
         on="matching_time",
-        left_by=["site_id", "matching_depth"],
-        right_by=["ctd_station", "matching_depth"],
+        left_by=["work_area","site_id", "matching_depth"],
+        right_by=["ctd_work_area","ctd_station", "matching_depth"],
         tolerance=pd.Timedelta("4h"),
         allow_exact_matches=True,
         direction="nearest",
@@ -471,41 +473,16 @@ def create_aggregated_meta_variables(df):
         x = ",".join(x)
         return ",".join(set([item for item in x.split(",") if item]))
 
-    df["site_id"] = (
-        df.filter(regex="site_id$")
-        .replace(np.nan, "")
-        .aggregate(get_unique_string, axis=1)
-    )
-    df["work_area"] = (
-        df.filter(regex="work_area$")
-        .replace(np.nan, "")
-        .aggregate(get_unique_string, axis=1)
-    )
-    df["organization"] = (
-        df.filter(regex="organization$")
-        .replace(np.nan, "")
-        .aggregate(get_unique_string, axis=1)
-    )
-    df["survey"] = (
-        df.filter(regex="survey$")
-        .replace(np.nan, "")
-        .aggregate(get_unique_string, axis=1)
-    )
-
     # Split lat and gather lat
-    df["latitude"] = df.filter(regex="_lat$").median(axis=1)
-    df["longitude"] = df.filter(regex="_long$").median(axis=1)
-    df["preciseLat"] = df.filter(regex="_gather_lat$").median(axis=1)
-    df["preciseLong"] = df.filter(regex="_gather_long$").median(axis=1)
-
-    df["pressure_transducer_depth"] = (
-        df.filter(regex="pressure_transducer_depth$")
-        .select_dtypes("number")
-        .aggregate(["median"], axis=1)
+    df = df.assign(
+        time =  df["collected"],
+        depth =  df["bottle_depth"],
+        depth_difference = df["bottle_depth"] - df["ctd_depth"],
+        latitude=df.filter(regex="_lat$").median(axis=1),
+        longitude= df.filter(regex="_long$").median(axis=1),
+        preciseLat= df.filter(regex="_gather_lat$").median(axis=1),
+        preciseLon= df.filter(regex="_gather_long$").median(axis=1)
     )
-    df["time"] = df["collected"]
-    df["depth"] = df["pressure_transducer_depth"].fillna(df["line_out_depth"])
-    df["depth_difference"] = df["depth"] - df["ctd_depth"]
 
     # Remove columns that have been aggregated we assume that all have the same values
     _drop_regex = (
@@ -534,10 +511,8 @@ def get_bottle_data(
     df = join_sample_data(station, time_min, time_max)
     # Matched to ctd data
     df = join_ctd_data(df, station, time_min, time_max)
-
+    df = df.dropna(axis='columns',how='all')
     df = create_aggregated_meta_variables(df)
-    df["time"] = df["collected"]
-    df["depth"] = df["pressure_transducer_depth"].fillna(df["line_out_depth"])
     return df
 
 
