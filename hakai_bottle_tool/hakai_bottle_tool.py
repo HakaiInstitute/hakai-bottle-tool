@@ -274,7 +274,7 @@ def join_sample_data(
     return df
 
 
-def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
+def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1, bottle_depth_variable='bottle_depth'):
     """join_ctd_data
     Matching Algorithm use to match CTD Profile to bottle data. The algorithm always match data for the same
     station id on both side (Bottle and CTD). Then then matching will be done by in the following other:
@@ -323,7 +323,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
     # Generate matching depth and time variables
     df_bottle["matching_depth"] = (
-        df_bottle["bottle_depth"].div(bin_size).round().astype("int64")
+        df_bottle[bottle_depth_variable].div(bin_size).round().astype("int64")
     )
     df_ctd["matching_depth"] = df_ctd["ctd_depth"].div(bin_size).round().astype("int64")
     df_bottle["matching_time"] = df_bottle["collected"]
@@ -348,7 +348,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     # Retrieve bottle data with matching depths and remove those not matching from df_bottles
     in_tolerance = _within_depth_tolerance(
         df_bottles_closest_time_depth["ctd_depth"],
-        df_bottles_closest_time_depth["bottle_depth"],
+        df_bottles_closest_time_depth[bottle_depth_variable],
     )
     df_not_matched = df_bottles_closest_time_depth.loc[in_tolerance == False][
         df_bottle.columns
@@ -385,7 +385,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         # Verify if matched data is within tolerance
         in_tolerance = _within_depth_tolerance(
             df_bottles_time["ctd_depth"],
-            df_bottles_time["bottle_depth"],
+            df_bottles_time[bottle_depth_variable],
         )
         df_not_matched = df_bottles_time.loc[in_tolerance == False][df_bottle.columns]
         df_bottles_matched = pd.concat(
@@ -433,7 +433,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         if len(df_bottles_depth) > 0:
             in_tolerance = _within_depth_tolerance(
                 df_bottles_depth["ctd_depth"],
-                df_bottles_depth["bottle_depth"],
+                df_bottles_depth[bottle_depth_variable],
             )
             df_bottles_matched = pd.concat(
                 [df_bottles_matched, df_bottles_depth[in_tolerance]]
@@ -468,16 +468,13 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     return df_bottles_matched
 
 
-def create_aggregated_meta_variables(df):
-    def get_unique_string(x):
-        x = ",".join(x)
-        return ",".join(set([item for item in x.split(",") if item]))
+def create_aggregated_meta_variables(df,bottle_depth_variable):
 
     # Split lat and gather lat
     df = df.assign(
         time=df["collected"],
-        depth=df["bottle_depth"],
-        depth_difference=df["bottle_depth"] - df["ctd_depth"],
+        depth=df[bottle_depth_variable],
+        depth_difference=df[bottle_depth_variable] - df["ctd_depth"],
         latitude=df.filter(regex="_lat$").median(axis=1),
         longitude=df.filter(regex="_long$").median(axis=1),
         preciseLat=df.filter(regex="_gather_lat$").median(axis=1),
@@ -496,23 +493,38 @@ def get_bottle_data(
     station,
     time_min=None,
     time_max=None,
+    bottle_depth_variable='bottle_depth'
 ):
     """get_bottle_data
 
     Args:
         station (str): [description]
-        time_min (str, optional): Minimum time range (ex: '2020-01-01'). Defaults to None.
-        time_max (str, optional): Maximum time range (ex: '2021-01-01'). Defaults to None.
+        time_min (str, optional): Minimum time range (ex: '2020-01-01').
+            Defaults to None.
+        time_max (str, optional): Maximum time range (ex: '2021-01-01').
+            Defaults to None.
+        match_bottle_depth_with (str, optional): Depth parameter to match
+          bottle data with CTD data.
+            - 'bottle_depth' (default): Mixed of pressure_transducer_depth
+                (if available) and line_out_depth.
+            - 'line_out_depth': Line out depth.
+            - 'pressure_transucer_depth': Pressure transducer depth.
 
     Returns:
         dataframe: Bottle data with sample and ctd dataset.
     """
+    if bottle_depth_variable not in ["bottle_depth", "line_out_depth","pressure_transucer_depth" ]:
+        raise ValueError(
+            "match_bottle_depth_with can only be 'bottle_depth' or "
+            "'line_out_depth' or 'pressure_transucer_depth'."
+            f" Got {bottle_depth_variable}"
+        )
     # Samples matched by bottles
     df = join_sample_data(station, time_min, time_max)
     # Matched to ctd data
-    df = join_ctd_data(df, station, time_min, time_max)
+    df = join_ctd_data(df, station, time_min, time_max,bottle_depth_variable=bottle_depth_variable)
     df = df.dropna(axis="columns", how="all")
-    df = create_aggregated_meta_variables(df)
+    df = create_aggregated_meta_variables(df,bottle_depth_variable)
     return df
 
 
