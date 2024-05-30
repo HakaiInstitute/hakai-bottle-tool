@@ -2,16 +2,17 @@ import json
 import os
 import re
 import warnings
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from hakai_api import Client
 
-client = Client(credentials= os.getenv("HAKAI_API_TOKEN"))
-module_path = os.path.dirname(os.path.abspath(__file__))
+client = Client(credentials=os.getenv("HAKAI_API_TOKEN"))
+CONFIG_DIR = Path(__file__).parent / "config"
 
 # Define each sample type endpoint and the need transformations needed per endpoint
-bottle_sample_endpoints = {
+BOTTLE_SAMPLE_ENDPOINTS = {
     "eims/views/output/nutrients": {
         "query_filter": "&(no2_no3_flag!=SVD|no2_no3_flag=null)&(po4_flag!=SVD|po4_flag=null)&(sio2_flag!=SVD|sio2_flag=null)"
     },
@@ -30,10 +31,10 @@ bottle_sample_endpoints = {
     "eims/views/output/phytoplankton": {},
 }
 
-ctd_endpoint = "ctd/views/file/cast/data"
+CTD_ENDPOINT = "ctd/views/file/cast/data"
 
 # List of variables to ignore from the sample data
-ignored_variable_list = [
+IGNORED_VARIABLES = [
     "action",
     "rn",
     "sampling_bout",
@@ -56,7 +57,7 @@ ignored_variable_list = [
 ]
 
 # Variable list to ignore from the CTD data
-ctd_considered_variables = [
+CTD_VARIABLES = [
     "hakai_id",
     "device_model",
     "device_sn",
@@ -109,7 +110,7 @@ ctd_considered_variables = [
     "cdom_ppb_flag",
 ]
 
-index_default_list = [
+INDEXED_VARIABLES = [
     "organization",
     "work_area",
     "survey",
@@ -118,12 +119,12 @@ index_default_list = [
     "line_out_depth",
     "collected",
 ]
-agg_funcs = {
+AGG_FUNCS = {
     (float, int): [np.ptp, "mean", "std", "count"],
     (str, object): ["count", ",".join],
 }
 
-agg_rename = {
+AGG_NAME_MAPPING = {
     "count": ["nReplicates"],
     "ptp": ["range"],
     "<lambda_0>": [],
@@ -155,7 +156,11 @@ def rename_agg_column(columns, prefix, ignore):
             prefix
             + "_"
             + "_".join(
-                [item for item in map(lambda x: agg_rename(x, x), columns) if item]
+                [
+                    item
+                    for item in map(lambda x: AGG_NAME_MAPPING(x, x), columns)
+                    if item
+                ]
             )
         ]
 
@@ -171,6 +176,7 @@ def join_sample_data(
         station (str): Station for which to download the sample data
         time_min (str, optional):  Minimal Time for which to download the sample data. Defaults to None.
         time_max (str, optional):  Maximal Time for which to download the sample data. Defaults to None.
+        bottle_matching_timedelta (str, optional): Time delta to match bottle data. Defaults to "1hour".
 
     Returns:
         dataframe: joined sample data
@@ -183,7 +189,7 @@ def join_sample_data(
     if time_max:
         filter_url += f"&collected<={time_max}"
 
-    for endpoint, attrs in bottle_sample_endpoints.items():
+    for endpoint, attrs in BOTTLE_SAMPLE_ENDPOINTS.items():
         url = f"{client.api_root}/{endpoint}?{filter_url}"
         # query_filter input if exist
         if "query_filter" in attrs:
@@ -204,14 +210,14 @@ def join_sample_data(
         print(f"Downloaded: {len(df_endpoint)} records")
 
         # Drop variables we don't want
-        df_endpoint = df_endpoint.drop(columns=ignored_variable_list, errors="ignore")
+        df_endpoint = df_endpoint.drop(columns=IGNORED_VARIABLES, errors="ignore")
 
         # Rename
         if "map_values" in attrs:
             df_endpoint = df_endpoint.replace(attrs["map_values"])
 
         # Regroup data and apply pivot
-        index_list = list(set(index_default_list) & set(df_endpoint.columns))
+        index_list = list(set(INDEXED_VARIABLES) & set(df_endpoint.columns))
         df_endpoint = df_endpoint.pivot_table(
             index=index_list,
             columns=attrs.get("pivot"),
@@ -219,12 +225,13 @@ def join_sample_data(
         )
 
         # Rename columns
-        # Rename stats variable based on predefined mapping, reverse other of tuples, join by underscore and replace white space by underscore
+        # Rename stats variable based on predefined mapping, reverse other of
+        # tuples, join by underscore and replace white space by underscore
         df_endpoint.columns = [
             "_".join(
                 [endpoint.rsplit("/", 1)[1]]
                 + [col[0]]
-                + agg_rename[col[1]]
+                + AGG_NAME_MAPPING[col[1]]
                 + ([col[2]] if len(col) == 3 else [])
             ).replace(" ", "_")
             for col in df_endpoint.columns
@@ -274,25 +281,42 @@ def join_sample_data(
     return df
 
 
-def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
+def join_ctd_data(
+    df_bottle,
+    station,
+    time_min=None,
+    time_max=None,
+    bin_size=1,
+    bottle_depth_variable="bottle_depth",
+):
     """join_ctd_data
-    Matching Algorithm use to match CTD Profile to bottle data. The algorithm always match data for the same
-    station id on both side (Bottle and CTD). Then then matching will be done by in the following other:
-        1. Bottle data will be matched to the Closest CTD profile in time (before or after) and matched to an exact
-        CTD profile depth bin if available.
-        If no exact depth bin is available. This bottle will be ignored from this step.
-        2. Unmatched bottles will then be matched to the closest profile and closest depth
-        bin as long as the difference between the bottle and the matched CTD depth bin is within the tolerance.
-        3. Unmatched bottles will then be matched to the closest CTD depth bin available within
-        the considered time range as long as the difference in depth between the two remains within the tolerance.
+    Matching Algorithm use to match CTD Profile to bottle data. The algorithm
+    always match data for the same station id on both side (Bottle and CTD).
+    Then then matching will be done by in the following other:
+        1. Bottle data will be matched to the Closest CTD profile in time
+            (before or after) and matched to an exact
+            CTD profile depth bin if available.
+            If no exact depth bin is available.
+            This bottle will be ignored from this step.
+        2. Unmatched bottles will then be matched to the closest
+            profile and closest depth
+        bin as long as the difference between the bottle and the
+            matched CTD depth bin is within the tolerance.
+        3. Unmatched bottles will then be matched to the closest
+            CTD depth bin available within
+        the considered time range as long as the difference in
+            depth between the two remains within the tolerance.
         4. Bottle data will be not matched to any CTD data.
 
     Args:
         df_bottle (dataframe): Joined bottle sample data
         station (str): station used to merge data
-        time_min (str, optional): Minimum time range to look for. Defaults to None.
-        time_max (str, optional): Maximum time range to look for. Defaults to None.
-        bin_size (int, optional): Size of the vertical bins to which bottle should be merged.. Defaults to 1.
+        time_min (str, optional): Minimum time range to look for.
+            Defaults to None.
+        time_max (str, optional): Maximum time range to look for.
+            Defaults to None.
+        bin_size (int, optional): Size of the vertical bins
+            to which bottle should be merged. Defaults to 1m.
     """
 
     def _within_depth_tolerance(bottle_depth, ctd_depth):
@@ -305,13 +329,16 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
     # Get CTD Data
     print("Download CTD data")
-    filter_url = f"limit=-1&pressure!=null&salinity!=-9.99e-29&station={station}&direction_flag=d"
+    filter_url = (
+        "limit=-1&pressure!=null&salinity!=-9.99e-29&"
+        f"station={station}&direction_flag=d"
+    )
     if time_min:
         filter_url += f"&measurement_dt>{time_min}"
     if time_max:
         filter_url += f"&measurement_dt<{time_max}"
-    filter_url += f"&fields={','.join(ctd_considered_variables)}"
-    url = f"{client.api_root}/{ctd_endpoint}?{filter_url}"
+    filter_url += f"&fields={','.join(CTD_VARIABLES)}"
+    url = f"{client.api_root}/{CTD_ENDPOINT}?{filter_url}"
     print(url)
     response = client.get(url)
     df_ctd = pd.DataFrame(response.json())
@@ -323,7 +350,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
 
     # Generate matching depth and time variables
     df_bottle["matching_depth"] = (
-        df_bottle["bottle_depth"].div(bin_size).round().astype("int64")
+        df_bottle[bottle_depth_variable].div(bin_size).round().astype("int64")
     )
     df_ctd["matching_depth"] = df_ctd["ctd_depth"].div(bin_size).round().astype("int64")
     df_bottle["matching_time"] = df_bottle["collected"]
@@ -345,19 +372,19 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         direction="nearest",
     )
 
-    # Retrieve bottle data with matching depths and remove those not matching from df_bottles
+    # Retrieve bottle data with matching depths and remove those
+    # not matching from df_bottles
     in_tolerance = _within_depth_tolerance(
         df_bottles_closest_time_depth["ctd_depth"],
-        df_bottles_closest_time_depth["bottle_depth"],
+        df_bottles_closest_time_depth[bottle_depth_variable],
     )
-    df_not_matched = df_bottles_closest_time_depth.loc[in_tolerance == False][
-        df_bottle.columns
-    ]
+    df_not_matched = df_bottles_closest_time_depth.loc[~in_tolerance, df_bottle.columns]
     df_bottles_matched = df_bottles_closest_time_depth[in_tolerance]
     print(f"{len(df_bottles_matched)} were matched to exact ctd pressure bin.")
     n_bottles -= len(df_bottles_matched)
 
-    # First try to retrieve to the closest profile in time and then closest depth
+    # First try to retrieve to the closest profile in time
+    #  and then closest depth
     if len(df_not_matched) > 0:
         df_bottles_time = pd.merge_asof(
             df_not_matched.sort_values("matching_time"),
@@ -385,21 +412,23 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         # Verify if matched data is within tolerance
         in_tolerance = _within_depth_tolerance(
             df_bottles_time["ctd_depth"],
-            df_bottles_time["bottle_depth"],
+            df_bottles_time[bottle_depth_variable],
         )
-        df_not_matched = df_bottles_time.loc[in_tolerance == False][df_bottle.columns]
+        df_not_matched = df_bottles_time.loc[~in_tolerance][df_bottle.columns]
         df_bottles_matched = pd.concat(
             [df_bottles_matched, df_bottles_time[in_tolerance]]
         )
     print(f"{len(df_bottles_time[in_tolerance])} were matched to nearest ctd profile.")
     n_bottles = n_bottles - len(df_bottles_matched)
 
-    # Then try to match whatever closest depth sample depth within the allowed time range
+    # Then try to match whatever closest depth sample depth within
+    # the allowed time range
     dt = pd.Timedelta("4h")
     df_bottles_depth = pd.DataFrame()
     drop_unmatched = []
     if len(df_not_matched) > 0:
-        # Loop through each collected times find any data collected nearby by time and try to match nearest depth
+        # Loop through each collected times find any data collected
+        # nearby by time and try to match nearest depth
         for collected, drop in df_not_matched.drop(columns=["matching_time"]).groupby(
             "collected"
         ):
@@ -433,15 +462,16 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
         if len(df_bottles_depth) > 0:
             in_tolerance = _within_depth_tolerance(
                 df_bottles_depth["ctd_depth"],
-                df_bottles_depth["bottle_depth"],
+                df_bottles_depth[bottle_depth_variable],
             )
             df_bottles_matched = pd.concat(
                 [df_bottles_matched, df_bottles_depth[in_tolerance]]
             )
 
-            df_not_matched = df_bottles_depth[in_tolerance == False][df_bottle.columns]
+            df_not_matched = df_bottles_depth[~in_tolerance][df_bottle.columns]
             print(
-                f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth ctd profile collected within ±{dt} period of the sample collection time."
+                f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth"
+                f" ctd profile collected within ±{dt} period of the sample collection time."
             )
             n_bottles -= len(df_bottles_matched)
         else:
@@ -468,16 +498,12 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1):
     return df_bottles_matched
 
 
-def create_aggregated_meta_variables(df):
-    def get_unique_string(x):
-        x = ",".join(x)
-        return ",".join(set([item for item in x.split(",") if item]))
-
+def create_aggregated_meta_variables(df, bottle_depth_variable):
     # Split lat and gather lat
     df = df.assign(
         time=df["collected"],
-        depth=df["bottle_depth"],
-        depth_difference=df["bottle_depth"] - df["ctd_depth"],
+        depth=df[bottle_depth_variable],
+        depth_difference=df[bottle_depth_variable] - df["ctd_depth"],
         latitude=df.filter(regex="_lat$").median(axis=1),
         longitude=df.filter(regex="_long$").median(axis=1),
         preciseLat=df.filter(regex="_gather_lat$").median(axis=1),
@@ -493,26 +519,42 @@ def create_aggregated_meta_variables(df):
 
 
 def get_bottle_data(
-    station,
-    time_min=None,
-    time_max=None,
+    station, time_min=None, time_max=None, bottle_depth_variable="bottle_depth"
 ):
     """get_bottle_data
 
     Args:
         station (str): [description]
-        time_min (str, optional): Minimum time range (ex: '2020-01-01'). Defaults to None.
-        time_max (str, optional): Maximum time range (ex: '2021-01-01'). Defaults to None.
+        time_min (str, optional): Minimum time range (ex: '2020-01-01').
+            Defaults to None.
+        time_max (str, optional): Maximum time range (ex: '2021-01-01').
+            Defaults to None.
+        match_bottle_depth_with (str, optional): Depth parameter to match
+          bottle data with CTD data.
+            - 'bottle_depth' (default): Mixed of pressure_transducer_depth
+                (if available) and line_out_depth.
+            - 'line_out_depth': Line out depth.
 
     Returns:
         dataframe: Bottle data with sample and ctd dataset.
     """
+    if bottle_depth_variable not in [
+        "bottle_depth",
+        "line_out_depth",
+    ]:
+        raise ValueError(
+            "match_bottle_depth_with can only be 'bottle_depth' or "
+            "'line_out_depth'."
+            f" Got {bottle_depth_variable}"
+        )
     # Samples matched by bottles
     df = join_sample_data(station, time_min, time_max)
     # Matched to ctd data
-    df = join_ctd_data(df, station, time_min, time_max)
+    df = join_ctd_data(
+        df, station, time_min, time_max, bottle_depth_variable=bottle_depth_variable
+    )
     df = df.dropna(axis="columns", how="all")
-    df = create_aggregated_meta_variables(df)
+    df = create_aggregated_meta_variables(df, bottle_depth_variable)
     return df
 
 
@@ -521,19 +563,20 @@ def filter_bottle_variables(df, filter_variables):
 
     Args:
         df (dataframe): bottle data dataframe
-        filter_variables (str): "Reduced" or "Complete" which make reference to the predefine list of variables present within the package.
+        filter_variables (str): "Reduced" or "Complete" which make reference
+            to the predefine list of variables present within the package.
 
     Returns:
         [dataframe]: [description]
     """
     # Filter columns
     if filter_variables == "Reduced":
-        variable_list = read_variable_list_file(
-            os.path.join(module_path, "config", "Reduced_variable_list.csv")
+        variable_list = (
+            (CONFIG_DIR / "Reduced_variable_list.csv").read_text().split("\n")
         )
     elif filter_variables == "Complete":
-        variable_list = read_variable_list_file(
-            os.path.join(module_path, "config", "Complete_variable_list.csv")
+        variable_list = (
+            (CONFIG_DIR / "Complete_variable_list.csv").read_text().split("\n")
         )
     else:
         raise RuntimeError(
@@ -557,18 +600,15 @@ def export_to_netcdf(df, output_path=None):
     """
     # Default output_path to local directory
     if output_path is None:
-        output_path = ""
-
+        output_path = "."
+    output_path = Path(output_path)
     # Convert datetime variables to timezone unaware datetime64 format in UTC
     for var, var_type in df.dtypes.to_dict().items():
         if "datetime" in f"{var_type}":
             df[var] = df[var].dt.tz_convert("UTC").dt.tz_localize(None)
 
     ds = df.to_xarray()
-    with open(
-        os.path.join(module_path, "config", "bottle_netcdf_attributes.json"), "r"
-    ) as f:
-        attributes = json.loads(f.read())
+    attributes = json.loads((CONFIG_DIR / "bottle_netcdf_attributes.json").read_text())
 
     # Add Global Attributes
     ds.attrs = attributes["NC_GLOBAL"]
@@ -586,22 +626,15 @@ def export_to_netcdf(df, output_path=None):
             )
             for collected, ds_collected in ds_site.groupby("collected.date"):
                 # Format name
-                subdir = os.path.join(work_area, site_id)
+                subdir =  output_path / work_area / site_id
                 filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(
                     ":", ""
                 )
-                filename = re.sub("\:|\-|\.0+", "", filename)
+                filename = re.sub(r"\:|\-|\.0+", "", filename)
                 # Generate subfolder if it doesnt' exist yet
-                if not os.path.exists(os.path.join(output_path, subdir)):
-                    os.makedirs(os.path.join(output_path, subdir))
+                subdir.mkdir(parents=True, exist_ok=True)
 
                 # Save NetCDF
-                new_file = os.path.join(output_path, subdir, filename)
+                new_file = subdir / filename
                 print(f"Save: {new_file}")
                 ds_collected.to_netcdf(new_file)
-
-
-def read_variable_list_file(path):
-    with open(path, "r") as f:
-        var_list = f.read().split("\n")
-    return var_list
