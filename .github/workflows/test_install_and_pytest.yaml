@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - development
   pull_request:
     branches:
       - master
@@ -14,7 +13,7 @@ jobs:
     name: Run linter and test suite
     runs-on: ubuntu-latest
     env:
-      CREDENTIAL_TOKEN: ${{ secrets.HAKAI_API_TOKEN }}
+      HAKAI_API_CREDENTIALS: ${{ secrets.HAKAI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
