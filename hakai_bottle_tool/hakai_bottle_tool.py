@@ -562,7 +562,8 @@ def filter_bottle_variables(df, filter_variables):
 
     Args:
         df (dataframe): bottle data dataframe
-        filter_variables (str): "Reduced" or "Complete" which make reference to the predefine list of variables present within the package.
+        filter_variables (str): "Reduced" or "Complete" which make reference
+            to the predefine list of variables present within the package.
 
     Returns:
         [dataframe]: [description]
@@ -631,7 +632,7 @@ def export_to_netcdf(df, output_path=None):
                 filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(
                     ":", ""
                 )
-                filename = re.sub("\:|\-|\.0+", "", filename)
+                filename = re.sub(r"\:|\-|\.0+", "", filename)
                 # Generate subfolder if it doesnt' exist yet
                 if not os.path.exists(os.path.join(output_path, subdir)):
                     os.makedirs(os.path.join(output_path, subdir))
