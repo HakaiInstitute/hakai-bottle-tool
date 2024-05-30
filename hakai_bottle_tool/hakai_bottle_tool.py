@@ -533,7 +533,6 @@ def get_bottle_data(
             - 'bottle_depth' (default): Mixed of pressure_transducer_depth
                 (if available) and line_out_depth.
             - 'line_out_depth': Line out depth.
-            - 'pressure_transucer_depth': Pressure transducer depth.
 
     Returns:
         dataframe: Bottle data with sample and ctd dataset.
@@ -541,11 +540,10 @@ def get_bottle_data(
     if bottle_depth_variable not in [
         "bottle_depth",
         "line_out_depth",
-        "pressure_transucer_depth",
     ]:
         raise ValueError(
             "match_bottle_depth_with can only be 'bottle_depth' or "
-            "'line_out_depth' or 'pressure_transucer_depth'."
+            "'line_out_depth'."
             f" Got {bottle_depth_variable}"
         )
     # Samples matched by bottles
