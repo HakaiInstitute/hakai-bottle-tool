@@ -11,7 +11,7 @@ client = Client(credentials=os.getenv("HAKAI_API_TOKEN"))
 module_path = os.path.dirname(os.path.abspath(__file__))
 
 # Define each sample type endpoint and the need transformations needed per endpoint
-bottle_sample_endpoints = {
+BOTTLE_SAMPLE_ENDPOINTS = {
     "eims/views/output/nutrients": {
         "query_filter": "&(no2_no3_flag!=SVD|no2_no3_flag=null)&(po4_flag!=SVD|po4_flag=null)&(sio2_flag!=SVD|sio2_flag=null)"
     },
@@ -30,10 +30,10 @@ bottle_sample_endpoints = {
     "eims/views/output/phytoplankton": {},
 }
 
-ctd_endpoint = "ctd/views/file/cast/data"
+CTD_ENDPOINT = "ctd/views/file/cast/data"
 
 # List of variables to ignore from the sample data
-ignored_variable_list = [
+IGNORED_VARIABLES = [
     "action",
     "rn",
     "sampling_bout",
@@ -56,7 +56,7 @@ ignored_variable_list = [
 ]
 
 # Variable list to ignore from the CTD data
-ctd_considered_variables = [
+CTD_VARIABLES = [
     "hakai_id",
     "device_model",
     "device_sn",
@@ -109,7 +109,7 @@ ctd_considered_variables = [
     "cdom_ppb_flag",
 ]
 
-index_default_list = [
+INDEXED_VARIABLES = [
     "organization",
     "work_area",
     "survey",
@@ -118,12 +118,12 @@ index_default_list = [
     "line_out_depth",
     "collected",
 ]
-agg_funcs = {
+AGG_FUNCS = {
     (float, int): [np.ptp, "mean", "std", "count"],
     (str, object): ["count", ",".join],
 }
 
-agg_rename = {
+AGG_NAME_MAPPING = {
     "count": ["nReplicates"],
     "ptp": ["range"],
     "<lambda_0>": [],
@@ -155,7 +155,11 @@ def rename_agg_column(columns, prefix, ignore):
             prefix
             + "_"
             + "_".join(
-                [item for item in map(lambda x: agg_rename(x, x), columns) if item]
+                [
+                    item
+                    for item in map(lambda x: AGG_NAME_MAPPING(x, x), columns)
+                    if item
+                ]
             )
         ]
 
@@ -171,6 +175,7 @@ def join_sample_data(
         station (str): Station for which to download the sample data
         time_min (str, optional):  Minimal Time for which to download the sample data. Defaults to None.
         time_max (str, optional):  Maximal Time for which to download the sample data. Defaults to None.
+        bottle_matching_timedelta (str, optional): Time delta to match bottle data. Defaults to "1hour".
 
     Returns:
         dataframe: joined sample data
@@ -183,7 +188,7 @@ def join_sample_data(
     if time_max:
         filter_url += f"&collected<={time_max}"
 
-    for endpoint, attrs in bottle_sample_endpoints.items():
+    for endpoint, attrs in BOTTLE_SAMPLE_ENDPOINTS.items():
         url = f"{client.api_root}/{endpoint}?{filter_url}"
         # query_filter input if exist
         if "query_filter" in attrs:
@@ -204,14 +209,14 @@ def join_sample_data(
         print(f"Downloaded: {len(df_endpoint)} records")
 
         # Drop variables we don't want
-        df_endpoint = df_endpoint.drop(columns=ignored_variable_list, errors="ignore")
+        df_endpoint = df_endpoint.drop(columns=IGNORED_VARIABLES, errors="ignore")
 
         # Rename
         if "map_values" in attrs:
             df_endpoint = df_endpoint.replace(attrs["map_values"])
 
         # Regroup data and apply pivot
-        index_list = list(set(index_default_list) & set(df_endpoint.columns))
+        index_list = list(set(INDEXED_VARIABLES) & set(df_endpoint.columns))
         df_endpoint = df_endpoint.pivot_table(
             index=index_list,
             columns=attrs.get("pivot"),
@@ -219,12 +224,13 @@ def join_sample_data(
         )
 
         # Rename columns
-        # Rename stats variable based on predefined mapping, reverse other of tuples, join by underscore and replace white space by underscore
+        # Rename stats variable based on predefined mapping, reverse other of
+        # tuples, join by underscore and replace white space by underscore
         df_endpoint.columns = [
             "_".join(
                 [endpoint.rsplit("/", 1)[1]]
                 + [col[0]]
-                + agg_rename[col[1]]
+                + AGG_NAME_MAPPING[col[1]]
                 + ([col[2]] if len(col) == 3 else [])
             ).replace(" ", "_")
             for col in df_endpoint.columns
@@ -283,23 +289,33 @@ def join_ctd_data(
     bottle_depth_variable="bottle_depth",
 ):
     """join_ctd_data
-    Matching Algorithm use to match CTD Profile to bottle data. The algorithm always match data for the same
-    station id on both side (Bottle and CTD). Then then matching will be done by in the following other:
-        1. Bottle data will be matched to the Closest CTD profile in time (before or after) and matched to an exact
-        CTD profile depth bin if available.
-        If no exact depth bin is available. This bottle will be ignored from this step.
-        2. Unmatched bottles will then be matched to the closest profile and closest depth
-        bin as long as the difference between the bottle and the matched CTD depth bin is within the tolerance.
-        3. Unmatched bottles will then be matched to the closest CTD depth bin available within
-        the considered time range as long as the difference in depth between the two remains within the tolerance.
+    Matching Algorithm use to match CTD Profile to bottle data. The algorithm
+    always match data for the same station id on both side (Bottle and CTD).
+    Then then matching will be done by in the following other:
+        1. Bottle data will be matched to the Closest CTD profile in time
+            (before or after) and matched to an exact
+            CTD profile depth bin if available.
+            If no exact depth bin is available.
+            This bottle will be ignored from this step.
+        2. Unmatched bottles will then be matched to the closest
+            profile and closest depth
+        bin as long as the difference between the bottle and the
+            matched CTD depth bin is within the tolerance.
+        3. Unmatched bottles will then be matched to the closest
+            CTD depth bin available within
+        the considered time range as long as the difference in
+            depth between the two remains within the tolerance.
         4. Bottle data will be not matched to any CTD data.
 
     Args:
         df_bottle (dataframe): Joined bottle sample data
         station (str): station used to merge data
-        time_min (str, optional): Minimum time range to look for. Defaults to None.
-        time_max (str, optional): Maximum time range to look for. Defaults to None.
-        bin_size (int, optional): Size of the vertical bins to which bottle should be merged.. Defaults to 1.
+        time_min (str, optional): Minimum time range to look for.
+            Defaults to None.
+        time_max (str, optional): Maximum time range to look for.
+            Defaults to None.
+        bin_size (int, optional): Size of the vertical bins
+            to which bottle should be merged. Defaults to 1m.
     """
 
     def _within_depth_tolerance(bottle_depth, ctd_depth):
@@ -312,13 +328,16 @@ def join_ctd_data(
 
     # Get CTD Data
     print("Download CTD data")
-    filter_url = f"limit=-1&pressure!=null&salinity!=-9.99e-29&station={station}&direction_flag=d"
+    filter_url = (
+        "limit=-1&pressure!=null&salinity!=-9.99e-29&"
+        f"station={station}&direction_flag=d"
+    )
     if time_min:
         filter_url += f"&measurement_dt>{time_min}"
     if time_max:
         filter_url += f"&measurement_dt<{time_max}"
-    filter_url += f"&fields={','.join(ctd_considered_variables)}"
-    url = f"{client.api_root}/{ctd_endpoint}?{filter_url}"
+    filter_url += f"&fields={','.join(CTD_VARIABLES)}"
+    url = f"{client.api_root}/{CTD_ENDPOINT}?{filter_url}"
     print(url)
     response = client.get(url)
     df_ctd = pd.DataFrame(response.json())
@@ -352,7 +371,8 @@ def join_ctd_data(
         direction="nearest",
     )
 
-    # Retrieve bottle data with matching depths and remove those not matching from df_bottles
+    # Retrieve bottle data with matching depths and remove those
+    # not matching from df_bottles
     in_tolerance = _within_depth_tolerance(
         df_bottles_closest_time_depth["ctd_depth"],
         df_bottles_closest_time_depth[bottle_depth_variable],
@@ -362,7 +382,8 @@ def join_ctd_data(
     print(f"{len(df_bottles_matched)} were matched to exact ctd pressure bin.")
     n_bottles -= len(df_bottles_matched)
 
-    # First try to retrieve to the closest profile in time and then closest depth
+    # First try to retrieve to the closest profile in time
+    #  and then closest depth
     if len(df_not_matched) > 0:
         df_bottles_time = pd.merge_asof(
             df_not_matched.sort_values("matching_time"),
@@ -399,12 +420,14 @@ def join_ctd_data(
     print(f"{len(df_bottles_time[in_tolerance])} were matched to nearest ctd profile.")
     n_bottles = n_bottles - len(df_bottles_matched)
 
-    # Then try to match whatever closest depth sample depth within the allowed time range
+    # Then try to match whatever closest depth sample depth within
+    # the allowed time range
     dt = pd.Timedelta("4h")
     df_bottles_depth = pd.DataFrame()
     drop_unmatched = []
     if len(df_not_matched) > 0:
-        # Loop through each collected times find any data collected nearby by time and try to match nearest depth
+        # Loop through each collected times find any data collected
+        # nearby by time and try to match nearest depth
         for collected, drop in df_not_matched.drop(columns=["matching_time"]).groupby(
             "collected"
         ):
@@ -446,7 +469,8 @@ def join_ctd_data(
 
             df_not_matched = df_bottles_depth[~in_tolerance][df_bottle.columns]
             print(
-                f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth ctd profile collected within ±{dt} period of the sample collection time."
+                f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth"
+                f" ctd profile collected within ±{dt} period of the sample collection time."
             )
             n_bottles -= len(df_bottles_matched)
         else:
