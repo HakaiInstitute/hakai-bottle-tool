@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from hakai_api import Client
 
-client = Client(credentials= os.getenv("HAKAI_API_TOKEN"))
+client = Client(credentials=os.getenv("HAKAI_API_TOKEN"))
 module_path = os.path.dirname(os.path.abspath(__file__))
 
 # Define each sample type endpoint and the need transformations needed per endpoint
@@ -274,7 +274,14 @@ def join_sample_data(
     return df
 
 
-def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1, bottle_depth_variable='bottle_depth'):
+def join_ctd_data(
+    df_bottle,
+    station,
+    time_min=None,
+    time_max=None,
+    bin_size=1,
+    bottle_depth_variable="bottle_depth",
+):
     """join_ctd_data
     Matching Algorithm use to match CTD Profile to bottle data. The algorithm always match data for the same
     station id on both side (Bottle and CTD). Then then matching will be done by in the following other:
@@ -350,7 +357,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1, 
         df_bottles_closest_time_depth["ctd_depth"],
         df_bottles_closest_time_depth[bottle_depth_variable],
     )
-    df_not_matched = df_bottles_closest_time_depth.loc[in_tolerance == False][
+    df_not_matched = df_bottles_closest_time_depth.loc[not in_tolerance][
         df_bottle.columns
     ]
     df_bottles_matched = df_bottles_closest_time_depth[in_tolerance]
@@ -387,7 +394,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1, 
             df_bottles_time["ctd_depth"],
             df_bottles_time[bottle_depth_variable],
         )
-        df_not_matched = df_bottles_time.loc[in_tolerance == False][df_bottle.columns]
+        df_not_matched = df_bottles_time.loc[not in_tolerance][df_bottle.columns]
         df_bottles_matched = pd.concat(
             [df_bottles_matched, df_bottles_time[in_tolerance]]
         )
@@ -439,7 +446,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1, 
                 [df_bottles_matched, df_bottles_depth[in_tolerance]]
             )
 
-            df_not_matched = df_bottles_depth[in_tolerance == False][df_bottle.columns]
+            df_not_matched = df_bottles_depth[not in_tolerance][df_bottle.columns]
             print(
                 f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth ctd profile collected within ±{dt} period of the sample collection time."
             )
@@ -468,8 +475,7 @@ def join_ctd_data(df_bottle, station, time_min=None, time_max=None, bin_size=1, 
     return df_bottles_matched
 
 
-def create_aggregated_meta_variables(df,bottle_depth_variable):
-
+def create_aggregated_meta_variables(df, bottle_depth_variable):
     # Split lat and gather lat
     df = df.assign(
         time=df["collected"],
@@ -490,10 +496,7 @@ def create_aggregated_meta_variables(df,bottle_depth_variable):
 
 
 def get_bottle_data(
-    station,
-    time_min=None,
-    time_max=None,
-    bottle_depth_variable='bottle_depth'
+    station, time_min=None, time_max=None, bottle_depth_variable="bottle_depth"
 ):
     """get_bottle_data
 
@@ -513,7 +516,11 @@ def get_bottle_data(
     Returns:
         dataframe: Bottle data with sample and ctd dataset.
     """
-    if bottle_depth_variable not in ["bottle_depth", "line_out_depth","pressure_transucer_depth" ]:
+    if bottle_depth_variable not in [
+        "bottle_depth",
+        "line_out_depth",
+        "pressure_transucer_depth",
+    ]:
         raise ValueError(
             "match_bottle_depth_with can only be 'bottle_depth' or "
             "'line_out_depth' or 'pressure_transucer_depth'."
@@ -522,9 +529,11 @@ def get_bottle_data(
     # Samples matched by bottles
     df = join_sample_data(station, time_min, time_max)
     # Matched to ctd data
-    df = join_ctd_data(df, station, time_min, time_max,bottle_depth_variable=bottle_depth_variable)
+    df = join_ctd_data(
+        df, station, time_min, time_max, bottle_depth_variable=bottle_depth_variable
+    )
     df = df.dropna(axis="columns", how="all")
-    df = create_aggregated_meta_variables(df,bottle_depth_variable)
+    df = create_aggregated_meta_variables(df, bottle_depth_variable)
     return df
 
 
