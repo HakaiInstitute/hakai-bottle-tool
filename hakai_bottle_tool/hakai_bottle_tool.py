@@ -2,13 +2,14 @@ import json
 import os
 import re
 import warnings
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from hakai_api import Client
 
 client = Client(credentials=os.getenv("HAKAI_API_TOKEN"))
-module_path = os.path.dirname(os.path.abspath(__file__))
+CONFIG_DIR = Path(__file__).parent / "config"
 
 # Define each sample type endpoint and the need transformations needed per endpoint
 BOTTLE_SAMPLE_ENDPOINTS = {
@@ -570,12 +571,12 @@ def filter_bottle_variables(df, filter_variables):
     """
     # Filter columns
     if filter_variables == "Reduced":
-        variable_list = read_variable_list_file(
-            os.path.join(module_path, "config", "Reduced_variable_list.csv")
+        variable_list = (
+            (CONFIG_DIR / "Reduced_variable_list.csv").read_text().split("\n")
         )
     elif filter_variables == "Complete":
-        variable_list = read_variable_list_file(
-            os.path.join(module_path, "config", "Complete_variable_list.csv")
+        variable_list = (
+            (CONFIG_DIR / "Complete_variable_list.csv").read_text().split("\n")
         )
     else:
         raise RuntimeError(
@@ -599,18 +600,15 @@ def export_to_netcdf(df, output_path=None):
     """
     # Default output_path to local directory
     if output_path is None:
-        output_path = ""
-
+        output_path = "."
+    output_path = Path(output_path)
     # Convert datetime variables to timezone unaware datetime64 format in UTC
     for var, var_type in df.dtypes.to_dict().items():
         if "datetime" in f"{var_type}":
             df[var] = df[var].dt.tz_convert("UTC").dt.tz_localize(None)
 
     ds = df.to_xarray()
-    with open(
-        os.path.join(module_path, "config", "bottle_netcdf_attributes.json"), "r"
-    ) as f:
-        attributes = json.loads(f.read())
+    attributes = json.loads((CONFIG_DIR / "bottle_netcdf_attributes.json").read_text())
 
     # Add Global Attributes
     ds.attrs = attributes["NC_GLOBAL"]
@@ -628,22 +626,15 @@ def export_to_netcdf(df, output_path=None):
             )
             for collected, ds_collected in ds_site.groupby("collected.date"):
                 # Format name
-                subdir = os.path.join(work_area, site_id)
+                subdir =  output_path / work_area / site_id
                 filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(
                     ":", ""
                 )
                 filename = re.sub(r"\:|\-|\.0+", "", filename)
                 # Generate subfolder if it doesnt' exist yet
-                if not os.path.exists(os.path.join(output_path, subdir)):
-                    os.makedirs(os.path.join(output_path, subdir))
+                subdir.mkdir(parents=True, exist_ok=True)
 
                 # Save NetCDF
-                new_file = os.path.join(output_path, subdir, filename)
+                new_file = subdir / filename
                 print(f"Save: {new_file}")
                 ds_collected.to_netcdf(new_file)
-
-
-def read_variable_list_file(path):
-    with open(path, "r") as f:
-        var_list = f.read().split("\n")
-    return var_list
