@@ -4,10 +4,10 @@ on:
     branches:
       - master
       - development
-    paths:
-      - hakai_bottle_tool/**
-      - tests/*
-      - .github/workflows/**
+  pull_request:
+    branches:
+      - master
+      - development
 
 jobs:
   miniconda:
@@ -29,4 +29,6 @@ jobs:
       - name: Install package locally
         run: pip install .
       - name: Pytest
+        with:
+          CREDENTIAL_TOKEN: ${{ secrets.HAKAI_API_TOKEN }}
         run: pytest
