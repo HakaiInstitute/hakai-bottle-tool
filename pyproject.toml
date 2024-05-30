@@ -4,6 +4,7 @@ version = "0.2.0"
 description = "Method use to combine Hakai sample data to CTD profile data."
 authors = ["Jessy Barrette <30420025+JessyBarrette@users.noreply.github.com>"]
 readme = "README.md"
+packages = [{ include = "hakai_bottle_tool" }]
 
 [tool.poetry.dependencies]
 python = "^3.11,<3.12"

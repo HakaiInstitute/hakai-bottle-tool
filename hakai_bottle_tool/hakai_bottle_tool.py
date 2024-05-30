@@ -357,9 +357,7 @@ def join_ctd_data(
         df_bottles_closest_time_depth["ctd_depth"],
         df_bottles_closest_time_depth[bottle_depth_variable],
     )
-    df_not_matched = df_bottles_closest_time_depth.loc[not in_tolerance][
-        df_bottle.columns
-    ]
+    df_not_matched = df_bottles_closest_time_depth.loc[~in_tolerance, df_bottle.columns]
     df_bottles_matched = df_bottles_closest_time_depth[in_tolerance]
     print(f"{len(df_bottles_matched)} were matched to exact ctd pressure bin.")
     n_bottles -= len(df_bottles_matched)
@@ -394,7 +392,7 @@ def join_ctd_data(
             df_bottles_time["ctd_depth"],
             df_bottles_time[bottle_depth_variable],
         )
-        df_not_matched = df_bottles_time.loc[not in_tolerance][df_bottle.columns]
+        df_not_matched = df_bottles_time.loc[~in_tolerance][df_bottle.columns]
         df_bottles_matched = pd.concat(
             [df_bottles_matched, df_bottles_time[in_tolerance]]
         )
@@ -446,7 +444,7 @@ def join_ctd_data(
                 [df_bottles_matched, df_bottles_depth[in_tolerance]]
             )
 
-            df_not_matched = df_bottles_depth[not in_tolerance][df_bottle.columns]
+            df_not_matched = df_bottles_depth[~in_tolerance][df_bottle.columns]
             print(
                 f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth ctd profile collected within ±{dt} period of the sample collection time."
             )

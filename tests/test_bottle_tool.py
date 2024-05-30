@@ -1,10 +1,19 @@
+import pytest
+
 from hakai_bottle_tool import hakai_bottle_tool
 
 
-class TestBottleMatchingTool:
-    def test_qu39_nov2016_matching(self):
-        df = hakai_bottle_tool.get_bottle_data("QU39", "2016-10-11", "2017-01-01")
-        assert not df.empty, "failed to get any data"
-        assert not df.query(
-            "phytoplankton_hakai_id == 'QPHY501'"
-        ).empty, "Missing phytoplankton_hakai_id = 'QPHY501'"
+@pytest.mark.parametrize(
+    "station,date_start,date_end,query",
+    [
+        ("QU39", "2016-10-11", "2017-01-01", "phytoplankton_hakai_id == 'QPHY501'"),
+    ],
+)
+def test_station_match(station, date_start, date_end, query):
+    df = hakai_bottle_tool.get_bottle_data(
+        station,
+        date_start,
+        date_end,
+    )
+    assert not df.empty, "failed to get any data"
+    assert not df.query(query).empty, f"No match found for query: {query}"
