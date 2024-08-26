@@ -18,7 +18,7 @@ def test_station_match(station, date_start, date_end, query, tmpdir):
     assert not df.empty, "failed to get any data"
     assert not df.query(query).empty, f"No match found for query: {query}"
 
-    hakai_bottle_tool.export_to_netcdf(df,tmpdir)
+    hakai_bottle_tool.export_to_netcdf(df, tmpdir)
 
 
 @pytest.mark.parametrize(

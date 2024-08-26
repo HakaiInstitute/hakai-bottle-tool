@@ -1,37 +1,20 @@
 import json
 import os
 import re
-import warnings
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 from hakai_api import Client
+from loguru import logger
+
+from hakai_bottle_tool import endpoints
+
+load_dotenv()
 
 client = Client(credentials=os.getenv("HAKAI_API_TOKEN"))
 CONFIG_DIR = Path(__file__).parent / "config"
-
-# Define each sample type endpoint and the need transformations needed per endpoint
-BOTTLE_SAMPLE_ENDPOINTS = {
-    "eims/views/output/nutrients": {
-        "query_filter": "&(no2_no3_flag!=SVD|no2_no3_flag=null)&(po4_flag!=SVD|po4_flag=null)&(sio2_flag!=SVD|sio2_flag=null)"
-    },
-    "eims/views/output/microbial": {"pivot": "microbial_sample_type"},
-    "eims/views/output/hplc": {},
-    "eims/views/output/poms": {
-        "map_values": {"acidified": {True: "Acidified", False: "nonAcidified"}},
-        "pivot": "acidified",
-    },
-    "eims/views/output/ysi": {},
-    "eims/views/output/chlorophyll": {
-        "query_filter": "&(chla_flag!=SVD|chla_flag=null)&(phaeo_flag!=SVD|phaeo_flag=null)",
-        "map_values": {"filter_type": {"GF/F": "GF_F", "Bulk GF/F": "Bulk_GF_F"}},
-        "pivot": "filter_type",
-    },
-    "eims/views/output/phytoplankton": {},
-}
-
-CTD_ENDPOINT = "ctd/views/file/cast/data"
 
 # List of variables to ignore from the sample data
 IGNORED_VARIABLES = [
@@ -133,6 +116,23 @@ AGG_NAME_MAPPING = {
 }
 
 
+def rename_sample_columns(endpoint, columns):
+    """Rename columns based on endpoint and predefined aggregate name mapping
+
+    Rename stats variable based on predefined mapping, reverse other of
+    tuples, join by underscore and replace white space by underscore
+    """
+    return [
+        "_".join(
+            [endpoint.rsplit("/", 1)[1]]
+            + [col[0]]
+            + AGG_NAME_MAPPING[col[1]]
+            + ([col[2]] if len(col) == 3 else [])
+        ).replace(" ", "_")
+        for col in columns
+    ]
+
+
 def get_aggregate_function(df, ignore):
     agg = {}
     for var in df.columns:
@@ -189,13 +189,13 @@ def join_sample_data(
     if time_max:
         filter_url += f"&collected<={time_max}"
 
-    for endpoint, attrs in BOTTLE_SAMPLE_ENDPOINTS.items():
+    for endpoint, attrs in endpoints.SAMPLES.items():
         url = f"{client.api_root}/{endpoint}?{filter_url}"
         # query_filter input if exist
         if "query_filter" in attrs:
             url += attrs["query_filter"]
 
-        print(f"Download data from: {url}")
+        logger.info(f"Download data from: {url}")
         response = client.get(url)
         if response.status_code != 200:
             response.raise_for_status()
@@ -204,10 +204,10 @@ def join_sample_data(
         )
 
         if df_endpoint.empty:
-            warnings.warn("Failed to retrieve any data", UserWarning)
+            logger.warning("Failed to retrieve any data")
             continue
 
-        print(f"Downloaded: {len(df_endpoint)} records")
+        logger.info(f"Downloaded: {len(df_endpoint)} records")
 
         # Drop variables we don't want
         df_endpoint = df_endpoint.drop(columns=IGNORED_VARIABLES, errors="ignore")
@@ -224,18 +224,8 @@ def join_sample_data(
             aggfunc=get_aggregate_function(df_endpoint, index_list),
         )
 
-        # Rename columns
-        # Rename stats variable based on predefined mapping, reverse other of
-        # tuples, join by underscore and replace white space by underscore
-        df_endpoint.columns = [
-            "_".join(
-                [endpoint.rsplit("/", 1)[1]]
-                + [col[0]]
-                + AGG_NAME_MAPPING[col[1]]
-                + ([col[2]] if len(col) == 3 else [])
-            ).replace(" ", "_")
-            for col in df_endpoint.columns
-        ]
+        # Transform resulting dataframe
+        df_endpoint.columns = rename_sample_columns(endpoint, df_endpoint.columns)
         df_endpoint = df_endpoint.reset_index().sort_values("collected")
         df_endpoint["collected"] = pd.to_datetime(df_endpoint["collected"])
 
@@ -262,7 +252,7 @@ def join_sample_data(
         ]
         df = df.drop(columns=["endpoint_index"])
         unmatched_samples = unmatched_samples.drop(columns=["endpoint_index"])
-        print(
+        logger.info(
             f"{len(unmatched_samples)} samples were not matched to the previous ones. Add them on their own"
         )
         df = pd.concat([df, unmatched_samples], ignore_index=True)
@@ -328,7 +318,7 @@ def join_ctd_data(
         )
 
     # Get CTD Data
-    print("Download CTD data")
+    logger.info("Download CTD data")
     filter_url = (
         "limit=-1&pressure!=null&salinity!=-9.99e-29&"
         f"station={station}&direction_flag=d"
@@ -338,8 +328,8 @@ def join_ctd_data(
     if time_max:
         filter_url += f"&measurement_dt<{time_max}"
     filter_url += f"&fields={','.join(CTD_VARIABLES)}"
-    url = f"{client.api_root}/{CTD_ENDPOINT}?{filter_url}"
-    print(url)
+    url = f"{client.api_root}/{endpoints.CTD_DATA}?{filter_url}"
+    logger.info(url)
     response = client.get(url)
     df_ctd = pd.DataFrame(response.json())
     if df_ctd.empty:
@@ -360,7 +350,7 @@ def join_ctd_data(
     n_bottles = len(df_bottle)
 
     # Find closest profile with the exact same depth
-    print(f"Match {n_bottles} bottles to CTD Profile data: ")
+    logger.info(f"Match {n_bottles} bottles to CTD Profile data: ")
     df_bottles_closest_time_depth = pd.merge_asof(
         df_bottle.sort_values("matching_time"),
         df_ctd.sort_values(["matching_time"]),
@@ -380,7 +370,7 @@ def join_ctd_data(
     )
     df_not_matched = df_bottles_closest_time_depth.loc[~in_tolerance, df_bottle.columns]
     df_bottles_matched = df_bottles_closest_time_depth[in_tolerance]
-    print(f"{len(df_bottles_matched)} were matched to exact ctd pressure bin.")
+    logger.info(f"{len(df_bottles_matched)} were matched to exact ctd pressure bin.")
     n_bottles -= len(df_bottles_matched)
 
     # First try to retrieve to the closest profile in time
@@ -418,7 +408,9 @@ def join_ctd_data(
         df_bottles_matched = pd.concat(
             [df_bottles_matched, df_bottles_time[in_tolerance]]
         )
-    print(f"{len(df_bottles_time[in_tolerance])} were matched to nearest ctd profile.")
+    logger.info(
+        f"{len(df_bottles_time[in_tolerance])} were matched to nearest ctd profile."
+    )
     n_bottles = n_bottles - len(df_bottles_matched)
 
     # Then try to match whatever closest depth sample depth within
@@ -469,7 +461,7 @@ def join_ctd_data(
             )
 
             df_not_matched = df_bottles_depth[~in_tolerance][df_bottle.columns]
-            print(
+            logger.info(
                 f"{len(df_bottles_depth[in_tolerance])} were matched to the closest in depth"
                 f" ctd profile collected within ±{dt} period of the sample collection time."
             )
@@ -484,8 +476,8 @@ def join_ctd_data(
             .drop_duplicates()
             .tolist()
         )
-        print(f"{len(df_not_matched)} failed to be matched to any profiles.")
-        print(f"Failed Collection Time list: {no_matched_collected_times}")
+        logger.info(f"{len(df_not_matched)} failed to be matched to any profiles.")
+        logger.info(f"Failed Collection Time list: {no_matched_collected_times}")
 
     # Finally, keep unmatched bottle data with no possible match
     if len(df_not_matched) > 0:
@@ -621,12 +613,12 @@ def export_to_netcdf(df, output_path=None):
     # Loop through each groups and save grouped files
     for work_area, ds_work_area in ds.groupby("work_area"):
         for site_id, ds_site in ds_work_area.groupby("site_id"):
-            print(
+            logger.info(
                 f"Save bottle data by work_area={work_area}, station={site_id} and by date"
             )
             for collected, ds_collected in ds_site.groupby("collected.date"):
                 # Format name
-                subdir =  output_path / work_area / site_id
+                subdir = output_path / work_area / site_id
                 filename = f"Hakai_Bottle_{work_area}_{site_id}_{collected}.nc".replace(
                     ":", ""
                 )
@@ -636,5 +628,5 @@ def export_to_netcdf(df, output_path=None):
 
                 # Save NetCDF
                 new_file = subdir / filename
-                print(f"Save: {new_file}")
+                logger.info(f"Save: {new_file}")
                 ds_collected.to_netcdf(new_file)

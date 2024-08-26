@@ -10,3 +10,4 @@ hakai_bottle_tool/__pycache__/**
 .vscode/**
 *.pyc
 *.csv
+.env
